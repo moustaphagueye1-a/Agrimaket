@@ -1,456 +1,313 @@
 {% extends 'base.html' %}
 
+{% block title %}Finaliser la commande | AgriMarket{% endblock %}
+
 {% block extra_css %}
 <style>
-    .checkout-section {
-        margin: 40px 0;
-    }
-
     .checkout-header {
-        text-align: center;
-        margin-bottom: 50px;
+        padding: 24px 0 36px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 40px;
     }
+    .checkout-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.4rem; font-weight: 700;
+        color: var(--crimson-dark); margin-bottom: 4px;
+    }
+    .checkout-header p { color: var(--mid-gray); font-size: .95rem; }
 
-    .checkout-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.8rem;
-        color: var(--deep-burgundy);
-        margin-bottom: 15px;
-        position: relative;
-        display: inline-block;
+    .progress-steps { display: flex; align-items: center; gap: 0; margin-top: 24px; }
+    .step { display: flex; align-items: center; gap: 10px; font-size: .85rem; font-weight: 500; color: var(--mid-gray); }
+    .step.active { color: var(--crimson); }
+    .step.done   { color: #27ae60; }
+    .step-num {
+        width: 28px; height: 28px; border-radius: 50%;
+        border: 2px solid currentColor;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .78rem; font-weight: 700; flex-shrink: 0;
     }
+    .step.active .step-num { background: var(--crimson); color: #fff; border-color: var(--crimson); }
+    .step.done   .step-num { background: #27ae60; color: #fff; border-color: #27ae60; }
+    .step-line { flex: 1; max-width: 60px; height: 1.5px; background: var(--border); margin: 0 6px; }
+    .step-line.done { background: #27ae60; }
 
-    .checkout-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 3px;
-        background: linear-gradient(90deg, var(--primary-red), var(--warm-gold), var(--primary-red));
-    }
+    .checkout-grid { display: grid; grid-template-columns: 1fr 420px; gap: 36px; align-items: start; }
 
-    .checkout-subtitle {
-        color: var(--sage);
-        font-size: 1.1rem;
-        margin-top: 25px;
-    }
+    .cart-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; position: sticky; top: 100px; }
+    .cart-card-header { background: var(--crimson-dark); padding: 18px 24px; display: flex; align-items: center; gap: 10px; }
+    .cart-card-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: #fff; margin: 0; }
+    .cart-card-header i { color: var(--gold); }
+    .cart-card-body { padding: 20px 24px; }
 
-    .cart-summary-card {
-        background: white;
-        border-radius: 20px;
-        padding: 35px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        border-top: 5px solid var(--warm-gold);
-        margin-bottom: 30px;
-        position: sticky;
-        top: 100px;
-    }
-
-    .cart-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.8rem;
-        color: var(--deep-burgundy);
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #f0f0f0;
-    }
-
-    .cart-items-list {
-        max-height: 400px;
-        overflow-y: auto;
-        margin-bottom: 25px;
-    }
+    .cart-items { max-height: 340px; overflow-y: auto; margin-bottom: 16px; }
+    .cart-items::-webkit-scrollbar { width: 4px; }
+    .cart-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
     .cart-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        background: #f8f8f8;
-        border-radius: 12px;
-        margin-bottom: 12px;
-        transition: all 0.3s ease;
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px; border-radius: 10px;
+        border: 1px solid var(--border); margin-bottom: 10px; transition: background .2s;
     }
-
-    .cart-item:hover {
-        background: #f0f0f0;
-        transform: translateX(5px);
+    .cart-item:hover { background: var(--ivory); }
+    .cart-item-icon {
+        width: 42px; height: 42px; border-radius: 8px;
+        background: var(--ivory); display: flex; align-items: center; justify-content: center;
+        color: var(--gold); font-size: 1.1rem; flex-shrink: 0;
     }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-name { font-weight: 600; font-size: .9rem; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cart-item-meta { font-size: .78rem; color: var(--mid-gray); margin-top: 2px; }
+    .cart-item-price { font-weight: 700; font-size: .95rem; color: var(--crimson); flex-shrink: 0; }
 
-    .item-info {
-        flex: 1;
+    .cart-totals { border-top: 1px solid var(--border); padding-top: 16px; }
+    .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: .9rem; color: var(--mid-gray); }
+    .total-row.main { margin-top: 12px; padding-top: 12px; border-top: 1.5px dashed var(--border); font-size: 1rem; font-weight: 600; color: var(--charcoal); }
+    .total-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 700; color: var(--crimson); }
+
+    .empty-cart { text-align: center; padding: 48px 20px; }
+    .empty-cart i { font-size: 3rem; color: var(--border); display: block; margin-bottom: 16px; }
+    .empty-cart h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--charcoal); margin-bottom: 8px; }
+    .empty-cart p { color: var(--mid-gray); font-size: .9rem; margin-bottom: 20px; }
+    .btn-shop {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--crimson); color: #fff; text-decoration: none;
+        padding: 10px 22px; border-radius: 50px; font-weight: 600; font-size: .9rem; transition: all .3s;
     }
+    .btn-shop:hover { background: var(--crimson-dark); color: #fff; }
 
-    .item-name {
-        font-weight: 700;
-        color: var(--charcoal);
-        margin-bottom: 5px;
-    }
+    .trust-badges { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .trust-item { display: flex; align-items: center; gap: 10px; font-size: .8rem; color: var(--mid-gray); }
+    .trust-item i { color: #27ae60; font-size: .9rem; }
 
-    .item-details {
-        font-size: 0.9rem;
-        color: var(--sage);
-    }
-
-    .item-price {
-        font-weight: 700;
-        color: var(--primary-red);
-        font-size: 1.1rem;
-    }
-
-    .cart-total-section {
-        padding-top: 20px;
-        border-top: 2px solid var(--warm-gold);
-    }
-
-    .total-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .total-label {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--charcoal);
-    }
-
-    .total-amount {
-        font-family: 'Playfair Display', serif;
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--primary-red);
-    }
-
-    .empty-cart {
-        text-align: center;
-        padding: 60px 20px;
-    }
-
-    .empty-cart i {
-        font-size: 4rem;
-        color: var(--sage);
-        margin-bottom: 20px;
-    }
-
-    .empty-cart h3 {
-        font-family: 'Playfair Display', serif;
-        color: var(--charcoal);
-        margin-bottom: 15px;
-    }
-
-    .checkout-form-card {
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        border-top: 5px solid var(--primary-red);
-    }
-
+    .form-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .form-section { padding: 28px 32px; border-bottom: 1px solid var(--border); }
+    .form-section:last-of-type { border-bottom: none; }
     .form-section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.5rem;
-        color: var(--deep-burgundy);
-        margin-bottom: 25px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #f0f0f0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        display: flex; align-items: center; gap: 10px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem; font-weight: 600; color: var(--crimson-dark); margin-bottom: 20px;
     }
-
-    .form-section-title i {
-        color: var(--warm-gold);
+    .form-section-title .icon {
+        width: 34px; height: 34px; background: rgba(122,18,18,.08);
+        border-radius: 8px; display: flex; align-items: center; justify-content: center;
+        color: var(--crimson); font-size: .9rem;
     }
-
-    .form-group {
-        margin-bottom: 25px;
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: .82rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+    .field label .req { color: #e53935; }
+    .form-input {
+        width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+        padding: 11px 14px; font-family: 'DM Sans', sans-serif;
+        font-size: .9rem; color: var(--charcoal); background: #fafaf8; transition: all .25s;
     }
+    .form-input:focus { outline: none; border-color: var(--gold); background: #fff; box-shadow: 0 0 0 3px rgba(201,168,76,.12); }
+    textarea.form-input { resize: vertical; min-height: 90px; }
 
-    .form-label {
-        font-weight: 600;
-        color: var(--charcoal);
-        margin-bottom: 8px;
-        display: block;
-    }
-
-    .form-label .required {
-        color: var(--primary-red);
-    }
-
-    .form-control, .form-select {
-        border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 14px 18px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        background: #fafafa;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: var(--warm-gold);
-        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-        background: white;
-        outline: none;
-    }
-
-    .btn-submit-order {
-        background: linear-gradient(135deg, var(--primary-red), var(--deep-burgundy));
-        color: white;
-        border: none;
-        padding: 18px 40px;
-        border-radius: 50px;
-        font-size: 1.2rem;
-        font-weight: 700;
+    .submit-area { padding: 24px 32px; background: var(--ivory); }
+    .btn-submit {
         width: 100%;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
+        background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+        color: #fff; border: none; border-radius: 50px; padding: 16px;
+        font-size: 1.05rem; font-weight: 700; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 10px; transition: all .3s;
     }
+    .btn-submit:hover:not(:disabled) { box-shadow: 0 10px 30px rgba(122,18,18,.35); transform: translateY(-2px); }
+    .btn-submit:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+    .secure-note { text-align: center; margin-top: 12px; font-size: .78rem; color: var(--mid-gray); display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .secure-note i { color: #27ae60; }
 
-    .btn-submit-order::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .btn-submit-order:hover::before {
-        width: 500px;
-        height: 500px;
-    }
-
-    .btn-submit-order:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
-    }
-
-    .btn-submit-order:disabled {
-        background: #cccccc;
-        cursor: not-allowed;
-    }
-
-    @media (max-width: 992px) {
-        .cart-summary-card {
-            position: static;
-            margin-bottom: 30px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .checkout-title {
-            font-size: 2rem;
-        }
-
-        .checkout-form-card {
-            padding: 25px;
-        }
-
-        .cart-summary-card {
-            padding: 25px;
-        }
-    }
+    @media (max-width: 991px) { .checkout-grid { grid-template-columns: 1fr; } .cart-card { position: static; } .form-row-2 { grid-template-columns: 1fr; } }
+    @media (max-width: 576px) { .form-section { padding: 20px; } .submit-area { padding: 16px 20px; } .checkout-header h1 { font-size: 1.9rem; } .progress-steps { display: none; } }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="checkout-section">
-    <div class="checkout-header">
-        <h1 class="checkout-title">Finaliser votre commande</h1>
-        <p class="checkout-subtitle">Vérifiez vos articles et complétez vos informations</p>
-    </div>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <div class="cart-summary-card">
-                <h2 class="cart-title"><i class="fas fa-shopping-basket me-2"></i>Votre panier</h2>
-                <div id="cart-content">
-                    <div class="empty-cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <h3>Votre panier est vide</h3>
-                        <p>Ajoutez des produits pour commencer</p>
-                        <a href="{% url 'home' %}" class="btn btn-primary mt-3">
-                            <i class="fas fa-arrow-left me-2"></i>Retour à la boutique
-                        </a>
-                    </div>
-                </div>
-            </div>
+<div class="checkout-header">
+    <h1>Finaliser votre commande</h1>
+    <p>Remplissez vos informations pour recevoir votre commande.</p>
+    <div class="progress-steps">
+        <div class="step done">
+            <div class="step-num"><i class="fas fa-check" style="font-size:.65rem"></i></div>
+            <span>Panier</span>
         </div>
-
-        <div class="col-lg-7">
-            <div class="checkout-form-card">
-                <form method="POST" id="checkout-form">
-                    {% csrf_token %}
-                    
-                    <input type="hidden" name="items" id="items">
-                    <input type="hidden" name="total" id="total">
-
-                    <div class="form-section-title">
-                        <i class="fas fa-user"></i>
-                        <span>Informations personnelles</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="nom">
-                            Nom complet <span class="required">*</span>
-                        </label>
-                        <input type="text" class="form-control" id="nom" name="nom" required placeholder="Votre nom complet">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="email">
-                            Adresse email <span class="required">*</span>
-                        </label>
-                        <input type="email" class="form-control" id="email" name="email" required placeholder="exemple@email.com">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="telephone">
-                            Téléphone <span class="required">*</span>
-                        </label>
-                        <input type="tel" class="form-control" id="telephone" name="telephone" required placeholder="+221 XX XXX XX XX">
-                    </div>
-
-                    <div class="form-section-title mt-4">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Adresse de livraison</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="region">
-                            Région <span class="required">*</span>
-                        </label>
-                        <select class="form-select" id="region" name="region" required>
-                            <option value="">Sélectionner une région</option>
-                            <option value="Dakar">Dakar</option>
-                            <option value="Thiès">Thiès</option>
-                            <option value="Saint-Louis">Saint-Louis</option>
-                            <option value="Diourbel">Diourbel</option>
-                            <option value="Kaolack">Kaolack</option>
-                            <option value="Ziguinchor">Ziguinchor</option>
-                            <option value="Louga">Louga</option>
-                            <option value="Tambacounda">Tambacounda</option>
-                            <option value="Fatick">Fatick</option>
-                            <option value="Kolda">Kolda</option>
-                            <option value="Matam">Matam</option>
-                            <option value="Kaffrine">Kaffrine</option>
-                            <option value="Kédougou">Kédougou</option>
-                            <option value="Sédhiou">Sédhiou</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="commune">
-                            Commune <span class="required">*</span>
-                        </label>
-                        <input type="text" class="form-control" id="commune" name="commune" required placeholder="Votre commune">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="adresse">
-                            Adresse complète <span class="required">*</span>
-                        </label>
-                        <textarea class="form-control" id="adresse" name="adresse" rows="3" required placeholder="Numéro, rue, quartier..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-submit-order" id="submit-btn" disabled>
-                        <i class="fas fa-check-circle me-2"></i>
-                        Confirmer la commande
-                    </button>
-                </form>
-            </div>
+        <div class="step-line done"></div>
+        <div class="step active">
+            <div class="step-num">2</div>
+            <span>Informations</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <span>Confirmation</span>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
-    function afficherPanier() {
-        var panier = JSON.parse(localStorage.getItem('panier')) || {};
-        var cartContent = document.getElementById('cart-content');
-        var submitBtn = document.getElementById('submit-btn');
-        var itemsInput = document.getElementById('items');
-        var totalInput = document.getElementById('total');
-        
-        var total = 0;
-        var itemsArray = [];
-        var html = '';
+<div class="checkout-grid">
+    <div>
+        <form method="POST" id="checkout-form">
+            {% csrf_token %}
+            <input type="hidden" name="items" id="items">
+            <input type="hidden" name="total" id="total">
 
-        if (Object.keys(panier).length === 0) {
-            cartContent.innerHTML = `
-                <div class="empty-cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>Votre panier est vide</h3>
-                    <p>Ajoutez des produits pour commencer</p>
-                    <a href="{% url 'home' %}" class="btn btn-primary mt-3">
-                        <i class="fas fa-arrow-left me-2"></i>Retour à la boutique
-                    </a>
-                </div>
-            `;
-            submitBtn.disabled = true;
-            return;
-        }
-
-        html = '<div class="cart-items-list">';
-        
-        for (var id in panier) {
-            var item = panier[id];
-            var sousTotal = item.prix * item.quantite;
-            total += sousTotal;
-            
-            itemsArray.push({
-                id: id,
-                nom: item.nom,
-                prix: item.prix,
-                quantite: item.quantite
-            });
-
-            html += `
-                <div class="cart-item">
-                    <div class="item-info">
-                        <div class="item-name">${item.nom}</div>
-                        <div class="item-details">
-                            ${item.quantite} x ${item.prix} FCFA
+            <div class="form-card">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="icon"><i class="fas fa-user"></i></div>
+                        Informations personnelles
+                    </div>
+                    <div class="field">
+                        <label for="nom">Nom complet <span class="req">*</span></label>
+                        <input class="form-input" type="text" id="nom" name="nom" required placeholder="Ex : Moussa Diallo">
+                    </div>
+                    <div class="form-row-2">
+                        <div class="field">
+                            <label for="email">Email <span class="req">*</span></label>
+                            <input class="form-input" type="email" id="email" name="email" required placeholder="exemple@email.sn">
+                        </div>
+                        <div class="field">
+                            <label for="telephone">Téléphone <span class="req">*</span></label>
+                            <input class="form-input" type="tel" id="telephone" name="telephone" required placeholder="+221 XX XXX XX XX">
                         </div>
                     </div>
-                    <div class="item-price">${sousTotal} FCFA</div>
                 </div>
-            `;
-        }
-        
-        html += '</div>';
-        
-        html += `
-            <div class="cart-total-section">
-                <div class="total-row">
-                    <span class="total-label">Total à payer:</span>
-                    <span class="total-amount">${total} FCFA</span>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+                        Adresse de livraison
+                    </div>
+                    <div class="form-row-2">
+                        <div class="field">
+                            <label for="region">Région <span class="req">*</span></label>
+                            <select class="form-input" id="region" name="region" required>
+                                <option value="">Choisir...</option>
+                                <option>Dakar</option><option>Thiès</option>
+                                <option>Saint-Louis</option><option>Diourbel</option>
+                                <option>Kaolack</option><option>Ziguinchor</option>
+                                <option>Louga</option><option>Tambacounda</option>
+                                <option>Fatick</option><option>Kolda</option>
+                                <option>Matam</option><option>Kaffrine</option>
+                                <option>Kédougou</option><option>Sédhiou</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="commune">Commune <span class="req">*</span></label>
+                            <input class="form-input" type="text" id="commune" name="commune" required placeholder="Votre commune">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="adresse">Adresse complète <span class="req">*</span></label>
+                        <textarea class="form-input" id="adresse" name="adresse" required placeholder="Numéro, rue, quartier..."></textarea>
+                    </div>
+                </div>
+
+                <div class="submit-area">
+                    <button type="submit" class="btn-submit" id="submit-btn" disabled>
+                        <i class="fas fa-check-circle"></i> Confirmer la commande
+                    </button>
+                    <div class="secure-note">
+                        <i class="fas fa-lock"></i> Vos données sont protégées
+                    </div>
                 </div>
             </div>
-        `;
-        
-        cartContent.innerHTML = html;
-        itemsInput.value = JSON.stringify(itemsArray);
-        totalInput.value = total;
-        submitBtn.disabled = false;
+        </form>
+    </div>
+
+    <div>
+        <div class="cart-card">
+            <div class="cart-card-header">
+                <i class="fas fa-basket-shopping"></i>
+                <h2>Récapitulatif</h2>
+            </div>
+            <div class="cart-card-body">
+                <div id="cart-content">
+                    <div class="empty-cart">
+                        <i class="fas fa-cart-shopping"></i>
+                        <h4>Panier vide</h4>
+                        <p>Ajoutez des produits pour continuer.</p>
+                        <a href="{% url 'home' %}" class="btn-shop">
+                            <i class="fas fa-arrow-left"></i> Boutique
+                        </a>
+                    </div>
+                </div>
+                <div class="trust-badges">
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> Paiement à la livraison disponible</div>
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> Livraison à Dakar sous 48h</div>
+                    <div class="trust-item"><i class="fas fa-check-circle"></i> Produits frais garantis</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+function afficherPanier() {
+    var panier = JSON.parse(localStorage.getItem('panier')) || {};
+    var cartContent = document.getElementById('cart-content');
+    var submitBtn   = document.getElementById('submit-btn');
+    var itemsInput  = document.getElementById('items');
+    var totalInput  = document.getElementById('total');
+    var total = 0;
+    var itemsArray = [];
+    var html = '';
+
+    if (Object.keys(panier).length === 0) {
+        cartContent.innerHTML = `
+            <div class="empty-cart">
+                <i class="fas fa-cart-shopping"></i>
+                <h4>Panier vide</h4>
+                <p>Ajoutez des produits pour continuer.</p>
+                <a href="{% url 'home' %}" class="btn-shop"><i class="fas fa-arrow-left"></i> Boutique</a>
+            </div>`;
+        submitBtn.disabled = true;
+        return;
     }
 
-    $(document).ready(function() {
-        afficherPanier();
-        updateBadge();
+    html = '<div class="cart-items">';
+    for (var id in panier) {
+        var item = panier[id];
+        var sousTotal = item.prix * item.quantite;
+        total += sousTotal;
+        itemsArray.push({ id: id, nom: item.nom, prix: item.prix, quantite: item.quantite });
+        html += `
+            <div class="cart-item">
+                <div class="cart-item-icon"><i class="fas fa-seedling"></i></div>
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${item.nom}</div>
+                    <div class="cart-item-meta">${item.quantite} × ${item.prix.toLocaleString()} FCFA</div>
+                </div>
+                <div class="cart-item-price">${sousTotal.toLocaleString()} FCFA</div>
+            </div>`;
+    }
+    html += '</div>';
+    html += `
+        <div class="cart-totals">
+            <div class="total-row"><span>Sous-total</span><span>${total.toLocaleString()} FCFA</span></div>
+            <div class="total-row"><span>Livraison</span><span style="color:#27ae60">Gratuite</span></div>
+            <div class="total-row main">
+                <span>Total</span>
+                <span class="total-amount">${total.toLocaleString()} FCFA</span>
+            </div>
+        </div>`;
 
-        $('#checkout-form').on('submit', function() {
-            localStorage.removeItem('panier');
-            updateBadge();
-        });
+    cartContent.innerHTML = html;
+    itemsInput.value = JSON.stringify(itemsArray);
+    totalInput.value  = total;
+    submitBtn.disabled = false;
+}
+
+$(document).ready(function() {
+    afficherPanier();
+    updateBadge();
+    $('#checkout-form').on('submit', function() {
+        localStorage.removeItem('panier');
+        updateBadge();
     });
+});
 </script>
 {% endblock %}

@@ -12,9 +12,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SECRET_KEY = 'django-insecure-votre-cle'
 DEBUG = True
-ALLOWED_HOSTS = ["127.0.0.1",
-    "localhost",
-    ".ngrok-free.dev",]
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://unperiodical-luci-reliable.ngrok-free.dev',
+    'https://*.ngrok-free.dev'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -65,3 +67,6 @@ DATABASES = {
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# --- MongoDB ---
+import os
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/terroir_sn")

@@ -2,344 +2,394 @@
 
 {% block extra_css %}
 <style>
-    .hero-section {
-        background: linear-gradient(135deg, rgba(139, 0, 0, 0.9), rgba(92, 10, 10, 0.95)), 
-                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%238B0000" width="1200" height="400"/></svg>');
-        padding: 60px 0;
-        border-radius: 20px;
-        margin-bottom: 50px;
-        box-shadow: 0 10px 40px rgba(139, 0, 0, 0.3);
+    /* ─── Hero ──────────────────────────────────────── */
+    .hero {
+        background: linear-gradient(135deg, var(--crimson-dark) 0%, var(--crimson) 60%, #9E2A2A 100%);
+        border-radius: var(--radius-lg);
+        padding: 64px 56px;
+        margin-bottom: 52px;
         position: relative;
         overflow: hidden;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 10px,
-            rgba(212, 175, 55, 0.05) 10px,
-            rgba(212, 175, 55, 0.05) 20px
-        );
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        color: var(--cream);
-    }
-
-    .hero-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 3rem;
-        font-weight: 800;
-        color: var(--warm-gold);
-        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
-        margin-bottom: 15px;
-    }
-
-    .hero-subtitle {
-        font-size: 1.3rem;
-        color: var(--cream);
-        font-weight: 300;
-        letter-spacing: 1px;
-    }
-
-    .products-header {
-        margin-bottom: 40px;
-        text-align: center;
-    }
-
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        color: var(--deep-burgundy);
-        margin-bottom: 10px;
-        position: relative;
-        display: inline-block;
-    }
-
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 3px;
-        background: linear-gradient(90deg, var(--primary-red), var(--warm-gold), var(--primary-red));
-    }
-
-    .product-card {
-        height: 100%;
-        border: none;
-        border-radius: 15px;
-        overflow: hidden;
-        background: white;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-    }
-
-    .product-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-red), var(--warm-gold));
-        transform: scaleX(0);
-        transition: transform 0.4s ease;
-    }
-
-    .product-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(139, 0, 0, 0.2);
-    }
-
-    .product-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    .product-image-wrapper {
-        position: relative;
-        overflow: hidden;
-        height: 250px;
-        background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
-    }
-
-    .product-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .product-card:hover img {
-        transform: scale(1.15);
-    }
-
-    .product-badge {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: linear-gradient(135deg, var(--warm-gold), #C19A2E);
-        color: var(--deep-burgundy);
-        padding: 6px 15px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
-        z-index: 10;
-    }
-
-    .product-body {
-        padding: 25px 20px;
-        background: white;
-    }
-
-    .product-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--charcoal);
-        margin-bottom: 12px;
-        min-height: 60px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        gap: 32px;
     }
-
-    .product-price {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-red);
-        margin-bottom: 20px;
-        font-family: 'Lato', sans-serif;
-    }
-
-    .product-price span {
-        font-size: 1rem;
-        color: var(--sage);
-        font-weight: 400;
-    }
-
-    .product-actions {
-        display: grid;
-        gap: 10px;
-    }
-
-    .btn-detail {
-        background: transparent;
-        border: 2px solid var(--sage);
-        color: var(--sage);
-        padding: 10px 20px;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .btn-detail:hover {
-        background: var(--sage);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(139, 157, 131, 0.3);
-    }
-
-    .btn-add-cart {
-        background: linear-gradient(135deg, var(--primary-red), var(--deep-burgundy));
-        border: none;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 50px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-add-cart::before {
+    .hero::before {
         content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
+        position: absolute; inset: 0;
+        background:
+            radial-gradient(circle at 80% 50%, rgba(201,168,76,.12) 0%, transparent 60%),
+            repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,.02) 30px, rgba(255,255,255,.02) 31px);
     }
-
-    .btn-add-cart:hover::before {
-        width: 300px;
-        height: 300px;
+    .hero-text { position: relative; z-index: 2; flex: 1; }
+    .hero-eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(201,168,76,.15);
+        border: 1px solid rgba(201,168,76,.3);
+        border-radius: 50px;
+        padding: 5px 14px;
+        font-size: .8rem; font-weight: 600;
+        color: var(--gold-light);
+        letter-spacing: .8px; text-transform: uppercase;
+        margin-bottom: 18px;
     }
-
-    .btn-add-cart:hover {
+    .hero-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.2rem, 4vw, 3.4rem);
+        font-weight: 700; color: #fff;
+        line-height: 1.15; margin-bottom: 16px;
+    }
+    .hero-title span { color: var(--gold-light); }
+    .hero-subtitle {
+        font-size: 1.05rem; color: rgba(255,255,255,.7);
+        font-weight: 300; max-width: 420px;
+        line-height: 1.7; margin-bottom: 28px;
+    }
+    .hero-cta {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: var(--gold); color: var(--crimson-dark);
+        font-weight: 700; font-size: .95rem;
+        padding: 13px 28px; border-radius: 50px;
+        text-decoration: none; transition: all .3s;
+    }
+    .hero-cta:hover {
+        background: var(--gold-light); color: var(--crimson-dark);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+        box-shadow: 0 8px 24px rgba(201,168,76,.35);
+    }
+    .hero-stats {
+        display: flex; gap: 24px;
+        position: relative; z-index: 2; flex-shrink: 0;
+    }
+    .stat-card {
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: var(--radius);
+        padding: 20px 24px; text-align: center;
+        backdrop-filter: blur(10px); min-width: 110px;
+    }
+    .stat-number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem; font-weight: 700;
+        color: var(--gold-light); line-height: 1; margin-bottom: 4px;
+    }
+    .stat-label {
+        font-size: .75rem; color: rgba(255,255,255,.55);
+        font-weight: 500; text-transform: uppercase; letter-spacing: .5px;
     }
 
-    .btn-add-cart.added {
-        background: linear-gradient(135deg, #2ecc71, #27ae60);
+    /* ─── Section header ─────────────────────────── */
+    .section-header {
+        display: flex; align-items: flex-end; justify-content: space-between;
+        margin-bottom: 32px; padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
     }
-
-    .empty-state {
-        text-align: center;
-        padding: 80px 20px;
+    .section-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem; font-weight: 700; color: var(--crimson-dark);
     }
+    .section-subtitle { font-size: .9rem; color: var(--mid-gray); margin-top: 4px; }
+    .result-count { font-size: .88rem; color: var(--mid-gray); }
 
-    .empty-state i {
-        font-size: 5rem;
-        color: var(--sage);
-        margin-bottom: 20px;
+    /* ─── Product Card ───────────────────────────── */
+    .product-card {
+        background: #fff; border-radius: var(--radius-lg);
+        overflow: hidden; border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        transition: transform .35s cubic-bezier(.25,.46,.45,.94), box-shadow .35s;
+        height: 100%; display: flex; flex-direction: column; position: relative;
     }
+    .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .card-img-wrap {
+        position: relative; overflow: hidden;
+        height: 240px; background: var(--ivory);
+    }
+    .card-img-wrap img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform .6s cubic-bezier(.25,.46,.45,.94);
+    }
+    .product-card:hover .card-img-wrap img { transform: scale(1.08); }
+    .img-badges {
+        position: absolute; top: 12px; left: 12px;
+        display: flex; flex-direction: column; gap: 6px; z-index: 3;
+    }
+    .badge-cat {
+        background: var(--crimson-dark); color: #fff;
+        font-size: .7rem; font-weight: 600;
+        padding: 4px 10px; border-radius: 50px; letter-spacing: .3px;
+    }
+    .badge-local {
+        background: var(--gold); color: var(--crimson-dark);
+        font-size: .68rem; font-weight: 700;
+        padding: 4px 10px; border-radius: 50px;
+        text-transform: uppercase; letter-spacing: .5px;
+    }
+    .stock-bar-wrap {
+        position: absolute; bottom: 0; left: 0; right: 0;
+        height: 3px; background: rgba(0,0,0,.15);
+    }
+    .stock-bar { height: 100%; background: #27ae60; transition: width .4s; }
+    .stock-bar.low { background: #e67e22; }
+    .stock-bar.critical { background: #e53935; }
+    .card-overlay {
+        position: absolute; inset: 0;
+        background: rgba(74,8,8,.6);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: opacity .3s; z-index: 4;
+    }
+    .product-card:hover .card-overlay { opacity: 1; }
+    .overlay-btn {
+        background: var(--gold); color: var(--crimson-dark);
+        border: none; padding: 12px 24px; border-radius: 50px;
+        font-weight: 700; font-size: .9rem; cursor: pointer;
+        display: flex; align-items: center; gap: 8px;
+        transform: translateY(10px); transition: all .3s .05s;
+    }
+    .product-card:hover .overlay-btn { transform: translateY(0); }
+    .overlay-btn:hover { background: var(--gold-light); }
+    .card-body-custom {
+        padding: 20px; flex: 1; display: flex; flex-direction: column;
+    }
+    .card-category {
+        font-size: .75rem; font-weight: 600; color: var(--crimson);
+        text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px;
+    }
+    .card-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem; font-weight: 600; color: var(--charcoal);
+        line-height: 1.3; margin-bottom: 12px; flex: 1;
+    }
+    .card-price-row {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-top: auto;
+    }
+    .card-price {
+        font-size: 1.5rem; font-weight: 700; color: var(--crimson);
+        font-family: 'Cormorant Garamond', serif;
+    }
+    .card-price small {
+        font-size: .8rem; font-weight: 400;
+        color: var(--mid-gray); font-family: 'DM Sans', sans-serif;
+    }
+    .btn-detail-sm {
+        background: transparent; border: 1.5px solid var(--border);
+        color: var(--mid-gray); border-radius: 50px;
+        padding: 7px 14px; font-size: .8rem; font-weight: 500;
+        text-decoration: none; transition: all .25s;
+    }
+    .btn-detail-sm:hover { border-color: var(--crimson); color: var(--crimson); }
+    .card-footer-custom { padding: 0 20px 20px; }
+    .btn-add-cart {
+        width: 100%;
+        background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+        color: #fff; border: none; border-radius: 50px;
+        padding: 12px; font-weight: 600; font-size: .9rem;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        gap: 8px; transition: all .3s; position: relative; overflow: hidden;
+    }
+    .btn-add-cart::after {
+        content: ''; position: absolute; inset: 0;
+        background: rgba(255,255,255,.15);
+        transform: scaleX(0); transform-origin: left; transition: transform .4s;
+    }
+    .btn-add-cart:hover::after { transform: scaleX(1); }
+    .btn-add-cart:hover { box-shadow: 0 6px 20px rgba(122,18,18,.35); }
+    .btn-add-cart.added { background: linear-gradient(135deg, #27ae60, #1e8449); }
 
+    /* ─── Empty state ────────────────────────────── */
+    .empty-state { text-align: center; padding: 80px 20px; }
+    .empty-icon {
+        width: 90px; height: 90px; border-radius: 50%;
+        background: var(--ivory); border: 2px dashed var(--border);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 24px; font-size: 2.2rem; color: var(--mid-gray);
+    }
     .empty-state h3 {
-        font-family: 'Playfair Display', serif;
-        color: var(--charcoal);
-        margin-bottom: 10px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.7rem; color: var(--charcoal); margin-bottom: 8px;
+    }
+    .empty-state p { color: var(--mid-gray); margin-bottom: 24px; }
+
+    /* ─── Pagination ─────────────────────────────── */
+    .pagination-wrap { display: flex; justify-content: center; margin-top: 48px; }
+    .page-link {
+        color: var(--crimson); border: 1.5px solid var(--border);
+        border-radius: 8px !important; margin: 0 3px;
+        padding: 8px 14px; transition: all .25s;
+    }
+    .page-link:hover, .page-item.active .page-link {
+        background: var(--crimson); border-color: var(--crimson); color: #fff;
     }
 
     @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2rem;
-        }
-
-        .hero-subtitle {
-            font-size: 1rem;
-        }
-
-        .product-image-wrapper {
-            height: 200px;
-        }
+        .hero { padding: 36px 24px; flex-direction: column; }
+        .hero-stats { width: 100%; justify-content: center; }
+        .stat-card { min-width: 80px; padding: 14px 16px; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="hero-section">
-    <div class="hero-content">
-        <h1 class="hero-title">Fraîcheur & Qualité Garanties</h1>
-        <p class="hero-subtitle">Découvrez notre sélection de viandes, volailles et charcuterie premium</p>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="hero-text">
+        <div class="hero-eyebrow">
+            <i class="fas fa-leaf"></i> Frais du Producteur, Livré chez Vous
+        </div>
+        <h1 class="hero-title">
+            Le meilleur du terroir<br><span>sénégalais</span>
+        </h1>
+        <p class="hero-subtitle">
+            Fruits, légumes, viandes, produits laitiers, miels et épices — directement depuis les producteurs locaux de toutes les régions du Sénégal.
+        </p>
+        <a href="#products" class="hero-cta">
+            <i class="fas fa-basket-shopping"></i> Découvrir nos produits
+        </a>
+    </div>
+    <div class="hero-stats d-none d-lg-flex">
+        <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Produits</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Local</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">48h</div>
+            <div class="stat-label">Livraison</div>
+        </div>
     </div>
 </div>
 
-<div class="products-header">
-    <h2 class="section-title">Nos Produits</h2>
-</div>
+<!-- Products -->
+<div id="products">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Nos Produits</h2>
+            <p class="section-subtitle">
+                {% if item_name %}Résultats pour « <strong>{{ item_name }}</strong> »{% else %}Toute notre sélection du moment{% endif %}
+            </p>
+        </div>
+        <span class="result-count">{{ produits.paginator.count }} produit{{ produits.paginator.count|pluralize }}</span>
+    </div>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-    {% for produit in produits %}
-    <div class="col">
-        <div class="card product-card">
-            <div class="product-image-wrapper">
-                <span class="product-badge">Premium</span>
-                {% if produit.image %}
-                    <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
-                {% else %}
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23e0e0e0' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%23999'%3EImage produit%3C/text%3E%3C/svg%3E" alt="{{ produit.nom }}">
-                {% endif %}
-            </div>
-            <div class="product-body">
-                <h5 class="product-title" id="nm{{produit.id}}">{{ produit.nom }}</h5>
-                <p class="product-price">
-                    <span id="pr{{produit.id}}">{{ produit.prix }}</span> <span>FCFA</span>
-                </p>
-                
-                <div class="product-actions">
-                    <a href="{% url 'detail' produit.id %}" class="btn btn-detail">
-                        <i class="fas fa-info-circle me-1"></i> Voir détails
-                    </a>
+    {% if produits %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        {% for produit in produits %}
+        <div class="col">
+            <div class="card product-card">
+                <div class="card-img-wrap">
+                    <div class="img-badges">
+                        <span class="badge-cat">{{ produit.categorie }}</span>
+                        <span class="badge-local">Local</span>
+                    </div>
+                    {% if produit.image %}
+                        <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
+                    {% else %}
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'%3E%3Crect fill='%23F5EFE6' width='400' height='280'/%3E%3Ctext x='50%25' y='48%25' dominant-baseline='middle' text-anchor='middle' font-family='serif' font-size='16' fill='%23C9A84C'%3E%3C/text%3E%3Ctext x='50%25' y='62%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%23999'%3EAgriMarket%3C/text%3E%3C/svg%3E" alt="{{ produit.nom }}">
+                    {% endif %}
+                    <div class="card-overlay">
+                        <button class="overlay-btn ted" id="{{ produit.id }}">
+                            <i class="fas fa-cart-plus"></i> Ajouter
+                        </button>
+                    </div>
+                    <div class="stock-bar-wrap">
+                        <div class="stock-bar" style="width:70%"></div>
+                    </div>
+                </div>
+
+                <div class="card-body-custom">
+                    <div class="card-category">{{ produit.categorie }}</div>
+                    <h5 class="card-name" id="nm{{ produit.id }}">{{ produit.nom }}</h5>
+                    <div class="card-price-row">
+                        <div class="card-price">
+                            <span id="pr{{ produit.id }}">{{ produit.prix }}</span>
+                            <small> FCFA</small>
+                        </div>
+                        <a href="{% url 'detail' produit.id %}" class="btn-detail-sm">
+                            <i class="fas fa-eye me-1"></i>Détails
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-footer-custom">
                     <button id="{{ produit.id }}" class="btn btn-add-cart ted">
-                        <i class="fas fa-cart-plus me-2"></i> Ajouter au panier
+                        <i class="fas fa-cart-plus"></i> Ajouter au panier
                     </button>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    {% if produits.has_other_pages %}
+    <div class="pagination-wrap">
+        <ul class="pagination">
+            {% if produits.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ produits.previous_page_number }}{% if item_name %}&item-name={{ item_name }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+            {% for num in produits.paginator.page_range %}
+            <li class="page-item {% if produits.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if item_name %}&item-name={{ item_name }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if produits.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ produits.next_page_number }}{% if item_name %}&item-name={{ item_name }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-search"></i></div>
+        <h3>Aucun produit trouvé</h3>
+        <p>Essayez un autre terme de recherche.</p>
+        <a href="{% url 'home' %}" class="hero-cta">
+            <i class="fas fa-arrow-left"></i> Voir tous les produits
+        </a>
+    </div>
+    {% endif %}
 </div>
 
-<script type="text/javascript">
-    $(document).on('click', '.ted', function() {
-        var $button = $(this);
-        var panier = JSON.parse(localStorage.getItem('panier')) || {};
-        var id = this.id.toString();
-        
-        if (panier[id]) {
-            panier[id].quantite += 1;
-        } else {
-            var nom = document.getElementById('nm' + id).innerText.trim();
-            var prix = document.getElementById('pr' + id).innerText.trim();
-            
-            panier[id] = { 
-                nom: nom, 
-                prix: parseFloat(prix), 
-                quantite: 1 
-            };
-        }
-        
-        localStorage.setItem('panier', JSON.stringify(panier));
-        updateBadge();
-        
-        $button.html('<i class="fas fa-check me-2"></i> Ajouté !').addClass('added');
-        setTimeout(() => {
-            $button.html('<i class="fas fa-cart-plus me-2"></i> Ajouter au panier').removeClass('added');
-        }, 1500);
-    });
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).on('click', '.ted', function(e) {
+    e.stopPropagation();
+    var $btn = $(this);
+    var id   = this.id.toString();
+    var panier = JSON.parse(localStorage.getItem('panier')) || {};
+
+    if (panier[id]) {
+        panier[id].quantite += 1;
+    } else {
+        var nom  = document.getElementById('nm' + id);
+        var prix = document.getElementById('pr' + id);
+        if (!nom || !prix) return;
+        panier[id] = { nom: nom.innerText.trim(), prix: parseFloat(prix.innerText.trim()), quantite: 1 };
+    }
+
+    localStorage.setItem('panier', JSON.stringify(panier));
+    updateBadge();
+    showToast(panier[id].nom + ' ajouté au panier !', '');
+
+    $btn.html('<i class="fas fa-check"></i> Ajouté !').addClass('added');
+    setTimeout(function() {
+        $btn.html('<i class="fas fa-cart-plus"></i> Ajouter au panier').removeClass('added');
+    }, 1800);
+});
 </script>
 {% endblock %}

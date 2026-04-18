@@ -1,326 +1,237 @@
 {% extends 'base.html' %}
 
+{% block title %}Commande confirmée | AgriMarket{% endblock %}
+
 {% block extra_css %}
 <style>
-    .confirmation-section {
+    .confirm-page {
         min-height: 70vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 0;
+        display: flex; align-items: center; justify-content: center;
+        padding: 48px 0;
     }
+    .confirm-wrapper { max-width: 640px; width: 100%; }
 
-    .confirmation-card {
-        background: white;
-        border-radius: 25px;
-        padding: 60px 50px;
-        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.12);
-        max-width: 700px;
-        width: 100%;
-        text-align: center;
-        position: relative;
+    .confirm-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
         overflow: hidden;
-        border-top: 6px solid var(--warm-gold);
-        animation: slideUp 0.6s ease;
+        box-shadow: var(--shadow-lg);
+        animation: riseUp .55s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes riseUp {
+        from { opacity: 0; transform: translateY(32px) scale(.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .confirm-banner {
+        background: linear-gradient(135deg, var(--crimson-dark) 0%, var(--crimson) 100%);
+        padding: 48px 40px 40px;
+        text-align: center; position: relative; overflow: hidden;
+    }
+    .confirm-banner::before {
+        content: ''; position: absolute; inset: 0;
+        background: repeating-linear-gradient(45deg, transparent, transparent 24px, rgba(201,168,76,.06) 24px, rgba(201,168,76,.06) 25px);
+    }
+    .confirm-banner::after {
+        content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+        height: 24px; background: #fff; border-radius: 24px 24px 0 0;
     }
 
-    .confirmation-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 20px,
-            rgba(212, 175, 55, 0.02) 20px,
-            rgba(212, 175, 55, 0.02) 40px
-        );
-        pointer-events: none;
+    .success-ring {
+        width: 90px; height: 90px; border-radius: 50%;
+        background: rgba(255,255,255,.15);
+        border: 2px solid rgba(201,168,76,.4);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 22px; position: relative; z-index: 2;
+        animation: scaleIn .5s cubic-bezier(.22,.68,0,1.5) .2s both;
+    }
+    @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-ring::before {
+        content: ''; position: absolute; inset: -8px; border-radius: 50%;
+        border: 1.5px dashed rgba(201,168,76,.3);
+        animation: spin 12s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .success-ring i {
+        font-size: 2.4rem; color: var(--gold-light);
+        animation: checkIn .6s ease .5s both;
+    }
+    @keyframes checkIn {
+        from { transform: scale(0) rotate(-30deg); opacity: 0; }
+        to   { transform: scale(1) rotate(0); opacity: 1; }
     }
 
-    .confirmation-content {
-        position: relative;
-        z-index: 2;
+    .confirm-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.2rem; font-weight: 700; color: #fff;
+        margin-bottom: 8px; position: relative; z-index: 2;
+        animation: fadeUp .5s ease .4s both;
+    }
+    .customer-name { color: var(--gold-light); }
+    .confirm-subtitle {
+        color: rgba(255,255,255,.7); font-size: .95rem;
+        position: relative; z-index: 2;
+        animation: fadeUp .5s ease .55s both;
+    }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
-    .success-icon-wrapper {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #2ecc71, #27ae60);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 30px;
-        box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
-        animation: scaleIn 0.5s ease 0.3s both;
+    .confirm-body { padding: 36px 40px; }
+
+    .order-ref {
+        display: flex; align-items: center; justify-content: space-between;
+        background: var(--ivory); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 18px;
+        margin-bottom: 28px; font-size: .88rem;
+        animation: fadeUp .5s ease .65s both;
+    }
+    .order-ref-label { color: var(--mid-gray); }
+    .order-ref-val {
+        font-weight: 700; color: var(--crimson);
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1rem; letter-spacing: 1px;
     }
 
-    @keyframes scaleIn {
-        from {
-            transform: scale(0);
-            opacity: 0;
-        }
-        to {
-            transform: scale(1);
-            opacity: 1;
-        }
+    .steps-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem; font-weight: 600; color: var(--charcoal);
+        margin-bottom: 16px; animation: fadeUp .5s ease .75s both;
     }
-
-    .success-icon {
-        font-size: 3.5rem;
-        color: white;
-        animation: checkmark 0.8s ease 0.5s both;
-    }
-
-    @keyframes checkmark {
-        0% {
-            transform: scale(0) rotate(-45deg);
-            opacity: 0;
-        }
-        50% {
-            transform: scale(1.2) rotate(5deg);
-        }
-        100% {
-            transform: scale(1) rotate(0deg);
-            opacity: 1;
-        }
-    }
-
-    .confirmation-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        color: var(--deep-burgundy);
-        margin-bottom: 20px;
-        font-weight: 800;
-        animation: fadeIn 0.6s ease 0.6s both;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .customer-name {
-        color: var(--warm-gold);
-        font-weight: 700;
-    }
-
-    .confirmation-message {
-        font-size: 1.15rem;
-        color: var(--charcoal);
-        line-height: 1.8;
-        margin-bottom: 30px;
-        animation: fadeIn 0.6s ease 0.8s both;
-    }
-
-    .info-box {
-        background: linear-gradient(135deg, #f8f8f8, #ffffff);
-        border-radius: 15px;
-        padding: 25px;
-        margin: 30px 0;
-        border-left: 5px solid var(--primary-red);
-        text-align: left;
-        animation: fadeIn 0.6s ease 1s both;
-    }
-
-    .info-item {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
-        padding: 12px;
-        background: white;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .info-item:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .info-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .info-icon {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--warm-gold), #C19A2E);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-
-    .info-content {
-        flex: 1;
-    }
-
-    .info-label {
-        font-size: 0.85rem;
-        color: var(--sage);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 3px;
-    }
-
-    .info-value {
-        font-size: 1.1rem;
-        color: var(--charcoal);
-        font-weight: 700;
-    }
-
-    .next-steps {
-        background: linear-gradient(135deg, rgba(139, 0, 0, 0.05), rgba(212, 175, 55, 0.05));
-        border-radius: 15px;
-        padding: 25px;
-        margin: 30px 0;
-        animation: fadeIn 0.6s ease 1.2s both;
-    }
-
-    .next-steps-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
-        color: var(--deep-burgundy);
-        margin-bottom: 15px;
-        font-weight: 700;
-    }
-
     .steps-list {
-        text-align: left;
-        padding-left: 20px;
+        display: flex; flex-direction: column; gap: 12px;
+        margin-bottom: 32px; animation: fadeUp .5s ease .85s both;
     }
-
     .step-item {
-        display: flex;
-        align-items: start;
-        gap: 12px;
-        margin-bottom: 12px;
-        font-size: 1rem;
-        color: var(--charcoal);
+        display: flex; align-items: flex-start; gap: 14px;
+        padding: 14px 16px; border: 1px solid var(--border);
+        border-radius: 10px; transition: all .25s;
     }
-
-    .step-number {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: var(--primary-red);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 0.9rem;
-        flex-shrink: 0;
+    .step-item:hover { border-color: var(--gold); background: var(--ivory); }
+    .step-dot {
+        width: 30px; height: 30px; border-radius: 50%;
+        background: var(--crimson-dark); color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .78rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
     }
+    .step-text { flex: 1; }
+    .step-text strong { display: block; font-size: .9rem; color: var(--charcoal); margin-bottom: 2px; }
+    .step-text span { font-size: .8rem; color: var(--mid-gray); }
+    .step-icon { color: var(--gold); font-size: 1rem; margin-top: 4px; }
 
-    .btn-back-home {
-        background: linear-gradient(135deg, var(--primary-red), var(--deep-burgundy));
-        color: white;
-        border: none;
-        padding: 18px 50px;
-        border-radius: 50px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        transition: all 0.3s ease;
-        margin-top: 30px;
-        animation: fadeIn 0.6s ease 1.4s both;
+    .confirm-actions {
+        display: flex; gap: 12px; flex-wrap: wrap;
+        animation: fadeUp .5s ease .95s both;
     }
-
-    .btn-back-home:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
-        color: white;
+    .btn-home {
+        flex: 1; min-width: 160px;
+        background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+        color: #fff; text-decoration: none;
+        padding: 14px 24px; border-radius: 50px;
+        font-weight: 700; font-size: .95rem;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: all .3s;
     }
+    .btn-home:hover { color: #fff; box-shadow: 0 8px 24px rgba(122,18,18,.3); transform: translateY(-2px); }
+    .btn-contact {
+        flex: 1; min-width: 160px;
+        background: transparent; color: var(--crimson); text-decoration: none;
+        padding: 14px 24px; border-radius: 50px;
+        border: 1.5px solid var(--crimson);
+        font-weight: 600; font-size: .95rem;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: all .3s;
+    }
+    .btn-contact:hover { background: var(--crimson); color: #fff; }
 
-    @media (max-width: 768px) {
-        .confirmation-card {
-            padding: 40px 30px;
-        }
+    .confirm-footer {
+        padding: 18px 40px; background: var(--ivory);
+        border-top: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap;
+        animation: fadeUp .5s ease 1.05s both;
+    }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--mid-gray); }
+    .trust-item i { color: #27ae60; }
 
-        .confirmation-title {
-            font-size: 2rem;
-        }
-
-        .confirmation-message {
-            font-size: 1rem;
-        }
-
-        .info-box {
-            padding: 20px;
-        }
+    @media (max-width: 576px) {
+        .confirm-banner { padding: 36px 24px 32px; }
+        .confirm-body { padding: 24px 20px; }
+        .confirm-footer { padding: 16px 20px; gap: 14px; }
+        .confirm-title { font-size: 1.8rem; }
+        .confirm-actions { flex-direction: column; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="confirmation-section">
-    <div class="confirmation-card">
-        <div class="confirmation-content">
-            <div class="success-icon-wrapper">
-                <i class="fas fa-check success-icon"></i>
+<div class="confirm-page">
+    <div class="confirm-wrapper">
+        <div class="confirm-card">
+
+            <div class="confirm-banner">
+                <div class="success-ring">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h1 class="confirm-title">
+                    Merci, <span class="customer-name">{{ nom }}</span> !
+                </h1>
+                <p class="confirm-subtitle">
+                    Votre commande a bien été enregistrée.
+                </p>
             </div>
 
-            <h1 class="confirmation-title">
-                Merci <span class="customer-name">{{ nom }}</span> !
-            </h1>
+            <div class="confirm-body">
+                <div class="order-ref">
+                    <span class="order-ref-label"><i class="fas fa-receipt me-2"></i>Commande enregistrée</span>
+                    <span class="order-ref-val">Confirmation envoyée</span>
+                </div>
 
-            <p class="confirmation-message">
-                Votre commande a été enregistrée avec succès. Notre équipe prépare déjà vos produits avec le plus grand soin.
-            </p>
-
-            <div class="next-steps">
-                <h3 class="next-steps-title">Prochaines étapes</h3>
+                <div class="steps-title">Prochaines étapes</div>
                 <div class="steps-list">
                     <div class="step-item">
-                        <div class="step-number">1</div>
-                        <span>Un conseiller vous contactera sous peu</span>
+                        <div class="step-dot">1</div>
+                        <div class="step-text">
+                            <strong>Confirmation par notre équipe</strong>
+                            <span>Un conseiller vous contactera sous peu pour valider votre commande.</span>
+                        </div>
+                        <i class="fas fa-phone step-icon"></i>
                     </div>
                     <div class="step-item">
-                        <div class="step-number">2</div>
-                        <span>Nous confirmerons les détails de votre commande</span>
+                        <div class="step-dot">2</div>
+                        <div class="step-text">
+                            <strong>Préparation de votre commande</strong>
+                            <span>Vos produits sont récoltés et préparés avec soin par nos producteurs.</span>
+                        </div>
+                        <i class="fas fa-box step-icon"></i>
                     </div>
                     <div class="step-item">
-                        <div class="step-number">3</div>
-                        <span>Votre commande sera livrée dans les meilleurs délais</span>
+                        <div class="step-dot">3</div>
+                        <div class="step-text">
+                            <strong>Livraison à votre adresse</strong>
+                            <span>Livraison sous 24–48h à Dakar et banlieue.</span>
+                        </div>
+                        <i class="fas fa-truck step-icon"></i>
                     </div>
+                </div>
+
+                <div class="confirm-actions">
+                    <a href="{% url 'home' %}" class="btn-home">
+                        <i class="fas fa-home"></i> Retour à la boutique
+                    </a>
+                    <a href="https://wa.me/221764139126" class="btn-contact" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Nous contacter
+                    </a>
                 </div>
             </div>
 
-            <a href="{% url 'home' %}" class="btn-back-home">
-                <i class="fas fa-home"></i>
-                Retour à la boutique
-            </a>
+            <div class="confirm-footer">
+                <div class="trust-item"><i class="fas fa-shield-halved"></i> Commande sécurisée</div>
+                <div class="trust-item"><i class="fas fa-leaf"></i> Produits frais garantis</div>
+                <div class="trust-item"><i class="fas fa-headset"></i> Support disponible</div>
+            </div>
+
         </div>
     </div>
 </div>
