@@ -3,21 +3,10 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Définition propre du chemin vers les templates
-TEMPLATES_DIRS = os.path.join(BASE_DIR, 'templates')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key')
+DEBUG      = os.environ.get('DEBUG', 'False') == 'True'
 
-# Chemin physique sur ton ordinateur
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-SECRET_KEY = 'django-insecure-votre-cle'
-DEBUG = True
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = [
-    'https://unperiodical-luci-reliable.ngrok-free.dev',
-    'https://*.ngrok-free.dev'
-]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,11 +16,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
-    
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # ← ajouter ici
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -45,7 +34,7 @@ ROOT_URLCONF = 'ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIRS], # On utilise la variable définie en haut
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,8 +56,19 @@ DATABASES = {
     }
 }
 
-STATIC_URL = 'static/'
+# ── MongoDB ──────────────────────────────────────────────
+MONGO_URI = os.environ.get(
+    'MONGO_URI',
+    'mongodb://localhost:27017/terroir_sn'  # fallback local
+)
+
+# ── Fichiers statiques ───────────────────────────────────
+STATIC_URL  = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# ── Fichiers media (images) ──────────────────────────────
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# --- MongoDB ---
-import os
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/terroir_sn")
