@@ -1,4 +1,3 @@
-# shop/apps.py
 from django.apps import AppConfig
 
 
@@ -7,5 +6,8 @@ class ShopConfig(AppConfig):
     name = 'shop'
 
     def ready(self):
-        # Active les signals dès le démarrage de Django
-        import shop.signals  # noqa
+        try:
+            import shop.signals
+            print("[SHOP] ✅ Signals MongoDB chargés")
+        except Exception as e:
+            print(f"[SHOP] ❌ Erreur chargement signals : {e}")

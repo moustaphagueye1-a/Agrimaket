@@ -2,230 +2,234 @@
 
 {% block extra_css %}
 <style>
-    /* ─── Hero ──────────────────────────────────────── */
+    /* ─── Hero ───────────────────────────────────── */
     .hero {
-        background: linear-gradient(135deg, var(--crimson-dark) 0%, var(--crimson) 60%, #9E2A2A 100%);
+        background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 55%, var(--leaf) 100%);
         border-radius: var(--radius-lg);
         padding: 64px 56px;
         margin-bottom: 52px;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 32px;
+        position: relative; overflow: hidden;
+        display: flex; align-items: center; justify-content: space-between; gap: 32px;
     }
     .hero::before {
         content: '';
         position: absolute; inset: 0;
         background:
-            radial-gradient(circle at 80% 50%, rgba(201,168,76,.12) 0%, transparent 60%),
-            repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,.02) 30px, rgba(255,255,255,.02) 31px);
+            radial-gradient(circle at 75% 50%, rgba(212,160,23,.15) 0%, transparent 55%),
+            repeating-linear-gradient(45deg, transparent, transparent 28px, rgba(255,255,255,.025) 28px, rgba(255,255,255,.025) 29px);
     }
     .hero-text { position: relative; z-index: 2; flex: 1; }
     .hero-eyebrow {
         display: inline-flex; align-items: center; gap: 8px;
-        background: rgba(201,168,76,.15);
-        border: 1px solid rgba(201,168,76,.3);
-        border-radius: 50px;
-        padding: 5px 14px;
-        font-size: .8rem; font-weight: 600;
-        color: var(--gold-light);
-        letter-spacing: .8px; text-transform: uppercase;
-        margin-bottom: 18px;
+        background: rgba(116,198,157,.2); border: 1px solid rgba(116,198,157,.4);
+        border-radius: 50px; padding: 5px 14px;
+        font-size: .8rem; font-weight: 700; color: var(--sage);
+        letter-spacing: .8px; text-transform: uppercase; margin-bottom: 18px;
     }
     .hero-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: clamp(2.2rem, 4vw, 3.4rem);
-        font-weight: 700; color: #fff;
-        line-height: 1.15; margin-bottom: 16px;
+        font-family: 'Merriweather', serif;
+        font-size: clamp(2rem, 3.8vw, 3.2rem);
+        font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 16px;
     }
-    .hero-title span { color: var(--gold-light); }
+    .hero-title span { color: var(--harvest-lt); }
     .hero-subtitle {
-        font-size: 1.05rem; color: rgba(255,255,255,.7);
-        font-weight: 300; max-width: 420px;
-        line-height: 1.7; margin-bottom: 28px;
+        font-size: 1.05rem; color: rgba(255,255,255,.75);
+        font-weight: 400; max-width: 420px; line-height: 1.75; margin-bottom: 28px;
     }
     .hero-cta {
         display: inline-flex; align-items: center; gap: 10px;
-        background: var(--gold); color: var(--crimson-dark);
+        background: var(--harvest); color: var(--forest);
         font-weight: 700; font-size: .95rem;
         padding: 13px 28px; border-radius: 50px;
         text-decoration: none; transition: all .3s;
+        box-shadow: 0 4px 16px rgba(212,160,23,.4);
     }
     .hero-cta:hover {
-        background: var(--gold-light); color: var(--crimson-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(201,168,76,.35);
+        background: var(--harvest-lt); color: var(--forest);
+        transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,160,23,.45);
     }
-    .hero-stats {
-        display: flex; gap: 24px;
-        position: relative; z-index: 2; flex-shrink: 0;
-    }
+    .hero-stats { display: flex; gap: 20px; position: relative; z-index: 2; flex-shrink: 0; }
     .stat-card {
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.12);
-        border-radius: var(--radius);
-        padding: 20px 24px; text-align: center;
-        backdrop-filter: blur(10px); min-width: 110px;
+        background: rgba(255,255,255,.1);
+        border: 1px solid rgba(116,198,157,.25);
+        border-radius: var(--radius); padding: 20px 22px;
+        text-align: center; backdrop-filter: blur(8px); min-width: 105px;
     }
     .stat-number {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 2rem; font-weight: 700;
-        color: var(--gold-light); line-height: 1; margin-bottom: 4px;
+        font-family: 'Merriweather', serif;
+        font-size: 1.9rem; font-weight: 900;
+        color: var(--harvest-lt); line-height: 1; margin-bottom: 5px;
     }
     .stat-label {
-        font-size: .75rem; color: rgba(255,255,255,.55);
-        font-weight: 500; text-transform: uppercase; letter-spacing: .5px;
+        font-size: .72rem; color: rgba(255,255,255,.6);
+        font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
     }
+
+    /* ─── Categories strip ───────────────────────── */
+    .cat-strip {
+        display: flex; gap: 10px; flex-wrap: wrap;
+        margin-bottom: 36px;
+    }
+    .cat-pill {
+        display: flex; align-items: center; gap: 6px;
+        background: var(--cream); border: 1.5px solid var(--border);
+        border-radius: 50px; padding: 7px 16px;
+        font-size: .82rem; font-weight: 600; color: var(--forest-mid);
+        text-decoration: none; transition: all .25s; cursor: pointer;
+    }
+    .cat-pill:hover, .cat-pill.active {
+        background: var(--forest-mid); color: #fff; border-color: var(--forest-mid);
+    }
+    .cat-pill i { font-size: .85rem; }
 
     /* ─── Section header ─────────────────────────── */
     .section-header {
         display: flex; align-items: flex-end; justify-content: space-between;
-        margin-bottom: 32px; padding-bottom: 18px;
-        border-bottom: 1px solid var(--border);
+        margin-bottom: 28px; padding-bottom: 16px;
+        border-bottom: 2px solid var(--border);
     }
     .section-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 2rem; font-weight: 700; color: var(--crimson-dark);
+        font-family: 'Merriweather', serif;
+        font-size: 1.85rem; font-weight: 900; color: var(--forest);
     }
     .section-subtitle { font-size: .9rem; color: var(--mid-gray); margin-top: 4px; }
-    .result-count { font-size: .88rem; color: var(--mid-gray); }
+    .result-count {
+        font-size: .85rem; color: var(--mid-gray);
+        background: var(--cream); border: 1px solid var(--border);
+        padding: 4px 12px; border-radius: 50px;
+    }
 
     /* ─── Product Card ───────────────────────────── */
     .product-card {
         background: #fff; border-radius: var(--radius-lg);
-        overflow: hidden; border: 1px solid var(--border);
+        overflow: hidden; border: 1.5px solid var(--border);
         box-shadow: var(--shadow-sm);
-        transition: transform .35s cubic-bezier(.25,.46,.45,.94), box-shadow .35s;
-        height: 100%; display: flex; flex-direction: column; position: relative;
+        transition: transform .35s cubic-bezier(.25,.46,.45,.94), box-shadow .35s, border-color .25s;
+        height: 100%; display: flex; flex-direction: column;
     }
-    .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .product-card:hover {
+        transform: translateY(-7px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--leaf);
+    }
+
     .card-img-wrap {
         position: relative; overflow: hidden;
-        height: 240px; background: var(--ivory);
+        height: 230px; background: var(--cream);
     }
     .card-img-wrap img {
         width: 100%; height: 100%; object-fit: cover;
         transition: transform .6s cubic-bezier(.25,.46,.45,.94);
     }
-    .product-card:hover .card-img-wrap img { transform: scale(1.08); }
+    .product-card:hover .card-img-wrap img { transform: scale(1.09); }
+
     .img-badges {
         position: absolute; top: 12px; left: 12px;
-        display: flex; flex-direction: column; gap: 6px; z-index: 3;
+        display: flex; flex-direction: column; gap: 5px; z-index: 3;
     }
     .badge-cat {
-        background: var(--crimson-dark); color: #fff;
-        font-size: .7rem; font-weight: 600;
+        background: var(--forest); color: #fff;
+        font-size: .68rem; font-weight: 700;
         padding: 4px 10px; border-radius: 50px; letter-spacing: .3px;
     }
     .badge-local {
-        background: var(--gold); color: var(--crimson-dark);
-        font-size: .68rem; font-weight: 700;
+        background: var(--harvest); color: var(--forest);
+        font-size: .65rem; font-weight: 800;
         padding: 4px 10px; border-radius: 50px;
         text-transform: uppercase; letter-spacing: .5px;
     }
-    .stock-bar-wrap {
-        position: absolute; bottom: 0; left: 0; right: 0;
-        height: 3px; background: rgba(0,0,0,.15);
-    }
-    .stock-bar { height: 100%; background: #27ae60; transition: width .4s; }
-    .stock-bar.low { background: #e67e22; }
-    .stock-bar.critical { background: #e53935; }
+
     .card-overlay {
         position: absolute; inset: 0;
-        background: rgba(74,8,8,.6);
+        background: rgba(27,67,50,.65);
         display: flex; align-items: center; justify-content: center;
         opacity: 0; transition: opacity .3s; z-index: 4;
     }
     .product-card:hover .card-overlay { opacity: 1; }
     .overlay-btn {
-        background: var(--gold); color: var(--crimson-dark);
-        border: none; padding: 12px 24px; border-radius: 50px;
-        font-weight: 700; font-size: .9rem; cursor: pointer;
+        background: var(--harvest); color: var(--forest);
+        border: none; padding: 11px 22px; border-radius: 50px;
+        font-weight: 700; font-size: .88rem; cursor: pointer;
         display: flex; align-items: center; gap: 8px;
         transform: translateY(10px); transition: all .3s .05s;
     }
     .product-card:hover .overlay-btn { transform: translateY(0); }
-    .overlay-btn:hover { background: var(--gold-light); }
-    .card-body-custom {
-        padding: 20px; flex: 1; display: flex; flex-direction: column;
-    }
+    .overlay-btn:hover { background: var(--harvest-lt); }
+
+    .stock-bar-wrap { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(0,0,0,.1); }
+    .stock-bar { height: 100%; background: var(--leaf); transition: width .4s; }
+
+    .card-body-custom { padding: 18px 18px 10px; flex: 1; display: flex; flex-direction: column; }
     .card-category {
-        font-size: .75rem; font-weight: 600; color: var(--crimson);
-        text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px;
+        font-size: .72rem; font-weight: 700; color: var(--leaf);
+        text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px;
     }
     .card-name {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.3rem; font-weight: 600; color: var(--charcoal);
-        line-height: 1.3; margin-bottom: 12px; flex: 1;
+        font-family: 'Merriweather', serif;
+        font-size: 1.15rem; font-weight: 700; color: var(--charcoal);
+        line-height: 1.35; margin-bottom: 10px; flex: 1;
     }
-    .card-price-row {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-top: auto;
+    .card-producer {
+        font-size: .78rem; color: var(--mid-gray);
+        margin-bottom: 12px;
     }
+    .card-producer i { color: var(--harvest); margin-right: 4px; }
+    .card-price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
     .card-price {
-        font-size: 1.5rem; font-weight: 700; color: var(--crimson);
-        font-family: 'Cormorant Garamond', serif;
+        font-family: 'Merriweather', serif;
+        font-size: 1.4rem; font-weight: 900; color: var(--forest-mid);
     }
-    .card-price small {
-        font-size: .8rem; font-weight: 400;
-        color: var(--mid-gray); font-family: 'DM Sans', sans-serif;
-    }
+    .card-price small { font-size: .78rem; font-weight: 400; color: var(--mid-gray); font-family: 'Nunito', sans-serif; }
     .btn-detail-sm {
         background: transparent; border: 1.5px solid var(--border);
         color: var(--mid-gray); border-radius: 50px;
-        padding: 7px 14px; font-size: .8rem; font-weight: 500;
+        padding: 6px 13px; font-size: .78rem; font-weight: 600;
         text-decoration: none; transition: all .25s;
     }
-    .btn-detail-sm:hover { border-color: var(--crimson); color: var(--crimson); }
-    .card-footer-custom { padding: 0 20px 20px; }
+    .btn-detail-sm:hover { border-color: var(--leaf); color: var(--forest-mid); }
+
+    .card-footer-custom { padding: 0 18px 18px; }
     .btn-add-cart {
         width: 100%;
-        background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
+        background: linear-gradient(135deg, var(--forest-mid), var(--forest));
         color: #fff; border: none; border-radius: 50px;
-        padding: 12px; font-weight: 600; font-size: .9rem;
+        padding: 11px; font-weight: 700; font-size: .88rem;
         cursor: pointer; display: flex; align-items: center; justify-content: center;
         gap: 8px; transition: all .3s; position: relative; overflow: hidden;
     }
     .btn-add-cart::after {
         content: ''; position: absolute; inset: 0;
-        background: rgba(255,255,255,.15);
+        background: rgba(255,255,255,.12);
         transform: scaleX(0); transform-origin: left; transition: transform .4s;
     }
     .btn-add-cart:hover::after { transform: scaleX(1); }
-    .btn-add-cart:hover { box-shadow: 0 6px 20px rgba(122,18,18,.35); }
+    .btn-add-cart:hover { box-shadow: 0 6px 20px rgba(27,67,50,.35); }
     .btn-add-cart.added { background: linear-gradient(135deg, #27ae60, #1e8449); }
 
-    /* ─── Empty state ────────────────────────────── */
+    /* ─── Empty state ─────────────────────────────── */
     .empty-state { text-align: center; padding: 80px 20px; }
     .empty-icon {
         width: 90px; height: 90px; border-radius: 50%;
-        background: var(--ivory); border: 2px dashed var(--border);
+        background: var(--cream); border: 2px dashed var(--border);
         display: flex; align-items: center; justify-content: center;
         margin: 0 auto 24px; font-size: 2.2rem; color: var(--mid-gray);
     }
-    .empty-state h3 {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.7rem; color: var(--charcoal); margin-bottom: 8px;
-    }
+    .empty-state h3 { font-family:'Merriweather',serif; font-size:1.6rem; color:var(--forest); margin-bottom:8px; }
     .empty-state p { color: var(--mid-gray); margin-bottom: 24px; }
 
     /* ─── Pagination ─────────────────────────────── */
     .pagination-wrap { display: flex; justify-content: center; margin-top: 48px; }
     .page-link {
-        color: var(--crimson); border: 1.5px solid var(--border);
-        border-radius: 8px !important; margin: 0 3px;
-        padding: 8px 14px; transition: all .25s;
+        color: var(--forest-mid); border: 1.5px solid var(--border);
+        border-radius: 8px !important; margin: 0 3px; padding: 8px 14px; transition: all .25s;
     }
     .page-link:hover, .page-item.active .page-link {
-        background: var(--crimson); border-color: var(--crimson); color: #fff;
+        background: var(--forest-mid); border-color: var(--forest-mid); color: #fff;
     }
 
     @media (max-width: 768px) {
         .hero { padding: 36px 24px; flex-direction: column; }
         .hero-stats { width: 100%; justify-content: center; }
-        .stat-card { min-width: 80px; padding: 14px 16px; }
     }
 </style>
 {% endblock %}
@@ -242,7 +246,7 @@
             Le meilleur du terroir<br><span>sénégalais</span>
         </h1>
         <p class="hero-subtitle">
-            Fruits, légumes, viandes, produits laitiers, miels et épices — directement depuis les producteurs locaux de toutes les régions du Sénégal.
+            Fruits, légumes, viandes, miels et épices — directement depuis les champs et élevages des producteurs locaux vers votre table.
         </p>
         <a href="#products" class="hero-cta">
             <i class="fas fa-basket-shopping"></i> Découvrir nos produits
@@ -262,6 +266,17 @@
             <div class="stat-label">Livraison</div>
         </div>
     </div>
+</div>
+
+<!-- Categories -->
+<div class="cat-strip">
+    <a href="{% url 'home' %}" class="cat-pill active"><i class="fas fa-border-all"></i> Tout</a>
+    <a href="{% url 'home' %}?item-name=fruit" class="cat-pill"><i class="fas fa-apple-whole"></i> Fruits</a>
+    <a href="{% url 'home' %}?item-name=legume" class="cat-pill"><i class="fas fa-carrot"></i> Légumes</a>
+    <a href="{% url 'home' %}?item-name=viande" class="cat-pill"><i class="fas fa-drumstick-bite"></i> Viandes</a>
+    <a href="{% url 'home' %}?item-name=miel" class="cat-pill"><i class="fas fa-jar"></i> Miel</a>
+    <a href="{% url 'home' %}?item-name=lait" class="cat-pill"><i class="fas fa-cow"></i> Laitiers</a>
+    <a href="{% url 'home' %}?item-name=cereale" class="cat-pill"><i class="fas fa-wheat-awn"></i> Céréales</a>
 </div>
 
 <!-- Products -->
@@ -284,12 +299,12 @@
                 <div class="card-img-wrap">
                     <div class="img-badges">
                         <span class="badge-cat">{{ produit.categorie }}</span>
-                        <span class="badge-local">Local</span>
+                        <span class="badge-local"><i class="fas fa-leaf"></i> Local</span>
                     </div>
                     {% if produit.image %}
                         <img src="{{ produit.image.url }}" alt="{{ produit.nom }}">
                     {% else %}
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'%3E%3Crect fill='%23F5EFE6' width='400' height='280'/%3E%3Ctext x='50%25' y='48%25' dominant-baseline='middle' text-anchor='middle' font-family='serif' font-size='16' fill='%23C9A84C'%3E%3C/text%3E%3Ctext x='50%25' y='62%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%23999'%3EAgriMarket%3C/text%3E%3C/svg%3E" alt="{{ produit.nom }}">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'%3E%3Crect fill='%23F0F7F0' width='400' height='280'/%3E%3Ctext x='50%25' y='48%25' dominant-baseline='middle' text-anchor='middle' font-family='serif' font-size='52' fill='%2374C69D'%3E🌿%3C/text%3E%3Ctext x='50%25' y='70%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%2340916C'%3EAgriMarket%3C/text%3E%3C/svg%3E" alt="{{ produit.nom }}">
                     {% endif %}
                     <div class="card-overlay">
                         <button class="overlay-btn ted" id="{{ produit.id }}">
@@ -304,6 +319,9 @@
                 <div class="card-body-custom">
                     <div class="card-category">{{ produit.categorie }}</div>
                     <h5 class="card-name" id="nm{{ produit.id }}">{{ produit.nom }}</h5>
+                    {% if produit.producteur %}
+                    <div class="card-producer"><i class="fas fa-store"></i>{{ produit.producteur }}</div>
+                    {% endif %}
                     <div class="card-price-row">
                         <div class="card-price">
                             <span id="pr{{ produit.id }}">{{ produit.prix }}</span>
@@ -329,11 +347,7 @@
     <div class="pagination-wrap">
         <ul class="pagination">
             {% if produits.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ produits.previous_page_number }}{% if item_name %}&item-name={{ item_name }}{% endif %}">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-            </li>
+            <li class="page-item"><a class="page-link" href="?page={{ produits.previous_page_number }}{% if item_name %}&item-name={{ item_name }}{% endif %}"><i class="fas fa-chevron-left"></i></a></li>
             {% endif %}
             {% for num in produits.paginator.page_range %}
             <li class="page-item {% if produits.number == num %}active{% endif %}">
@@ -341,11 +355,7 @@
             </li>
             {% endfor %}
             {% if produits.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ produits.next_page_number }}{% if item_name %}&item-name={{ item_name }}{% endif %}">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </li>
+            <li class="page-item"><a class="page-link" href="?page={{ produits.next_page_number }}{% if item_name %}&item-name={{ item_name }}{% endif %}"><i class="fas fa-chevron-right"></i></a></li>
             {% endif %}
         </ul>
     </div>
@@ -356,9 +366,7 @@
         <div class="empty-icon"><i class="fas fa-search"></i></div>
         <h3>Aucun produit trouvé</h3>
         <p>Essayez un autre terme de recherche.</p>
-        <a href="{% url 'home' %}" class="hero-cta">
-            <i class="fas fa-arrow-left"></i> Voir tous les produits
-        </a>
+        <a href="{% url 'home' %}" class="hero-cta"><i class="fas fa-arrow-left"></i> Voir tous les produits</a>
     </div>
     {% endif %}
 </div>
@@ -370,26 +378,21 @@
 $(document).on('click', '.ted', function(e) {
     e.stopPropagation();
     var $btn = $(this);
-    var id   = this.id.toString();
+    var id = this.id.toString();
     var panier = JSON.parse(localStorage.getItem('panier')) || {};
-
     if (panier[id]) {
         panier[id].quantite += 1;
     } else {
-        var nom  = document.getElementById('nm' + id);
+        var nom = document.getElementById('nm' + id);
         var prix = document.getElementById('pr' + id);
         if (!nom || !prix) return;
         panier[id] = { nom: nom.innerText.trim(), prix: parseFloat(prix.innerText.trim()), quantite: 1 };
     }
-
     localStorage.setItem('panier', JSON.stringify(panier));
     updateBadge();
     showToast(panier[id].nom + ' ajouté au panier !', '');
-
     $btn.html('<i class="fas fa-check"></i> Ajouté !').addClass('added');
-    setTimeout(function() {
-        $btn.html('<i class="fas fa-cart-plus"></i> Ajouter au panier').removeClass('added');
-    }, 1800);
+    setTimeout(function() { $btn.html('<i class="fas fa-cart-plus"></i> Ajouter au panier').removeClass('added'); }, 1800);
 });
 </script>
 {% endblock %}

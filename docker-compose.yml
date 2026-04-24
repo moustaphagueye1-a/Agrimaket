@@ -3,6 +3,7 @@ services:
     build: .
     volumes:
       - .:/app
+      - media_files:/app/media    # ← AJOUTER cette ligne
     ports:
       - "8000:8000"
     stdin_open: true
@@ -30,3 +31,4 @@ services:
 
 volumes:
   mongo_data:
+  media_files:    # ← AJOUTER cette ligne

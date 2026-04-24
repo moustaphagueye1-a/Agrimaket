@@ -1,167 +1,56 @@
 {% extends 'base.html' %}
-
 {% block title %}Commande confirmée | AgriMarket{% endblock %}
-
 {% block extra_css %}
 <style>
-    .confirm-page {
-        min-height: 70vh;
-        display: flex; align-items: center; justify-content: center;
-        padding: 48px 0;
-    }
-    .confirm-wrapper { max-width: 640px; width: 100%; }
+    .confirm-page { min-height:70vh; display:flex; align-items:center; justify-content:center; padding:48px 0; }
+    .confirm-wrapper { max-width:620px; width:100%; }
 
-    .confirm-card {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        box-shadow: var(--shadow-lg);
-        animation: riseUp .55s cubic-bezier(.22,.68,0,1.2) both;
-    }
-    @keyframes riseUp {
-        from { opacity: 0; transform: translateY(32px) scale(.97); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    .confirm-card { background:#fff; border:2px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg); animation:riseUp .55s cubic-bezier(.22,.68,0,1.2) both; }
+    @keyframes riseUp { from{opacity:0;transform:translateY(32px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
 
-    .confirm-banner {
-        background: linear-gradient(135deg, var(--crimson-dark) 0%, var(--crimson) 100%);
-        padding: 48px 40px 40px;
-        text-align: center; position: relative; overflow: hidden;
-    }
-    .confirm-banner::before {
-        content: ''; position: absolute; inset: 0;
-        background: repeating-linear-gradient(45deg, transparent, transparent 24px, rgba(201,168,76,.06) 24px, rgba(201,168,76,.06) 25px);
-    }
-    .confirm-banner::after {
-        content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-        height: 24px; background: #fff; border-radius: 24px 24px 0 0;
-    }
+    .confirm-banner { background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 60%,var(--leaf) 100%); padding:48px 40px 40px; text-align:center; position:relative; overflow:hidden; }
+    .confirm-banner::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg,transparent,transparent 24px,rgba(212,160,23,.07) 24px,rgba(212,160,23,.07) 25px); }
+    .confirm-banner::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:24px; background:#fff; border-radius:24px 24px 0 0; }
 
-    .success-ring {
-        width: 90px; height: 90px; border-radius: 50%;
-        background: rgba(255,255,255,.15);
-        border: 2px solid rgba(201,168,76,.4);
-        display: flex; align-items: center; justify-content: center;
-        margin: 0 auto 22px; position: relative; z-index: 2;
-        animation: scaleIn .5s cubic-bezier(.22,.68,0,1.5) .2s both;
-    }
-    @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .success-ring::before {
-        content: ''; position: absolute; inset: -8px; border-radius: 50%;
-        border: 1.5px dashed rgba(201,168,76,.3);
-        animation: spin 12s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .success-ring i {
-        font-size: 2.4rem; color: var(--gold-light);
-        animation: checkIn .6s ease .5s both;
-    }
-    @keyframes checkIn {
-        from { transform: scale(0) rotate(-30deg); opacity: 0; }
-        to   { transform: scale(1) rotate(0); opacity: 1; }
-    }
+    .success-ring { width:90px; height:90px; border-radius:50%; background:rgba(255,255,255,.15); border:2px solid rgba(212,160,23,.45); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; position:relative; z-index:2; animation:scaleIn .5s cubic-bezier(.22,.68,0,1.5) .2s both; }
+    @keyframes scaleIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+    .success-ring::before { content:''; position:absolute; inset:-8px; border-radius:50%; border:1.5px dashed rgba(212,160,23,.35); animation:spin 12s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .success-ring i { font-size:2.4rem; color:var(--harvest-lt); animation:checkIn .6s ease .5s both; }
+    @keyframes checkIn { from{transform:scale(0) rotate(-30deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
 
-    .confirm-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 2.2rem; font-weight: 700; color: #fff;
-        margin-bottom: 8px; position: relative; z-index: 2;
-        animation: fadeUp .5s ease .4s both;
-    }
-    .customer-name { color: var(--gold-light); }
-    .confirm-subtitle {
-        color: rgba(255,255,255,.7); font-size: .95rem;
-        position: relative; z-index: 2;
-        animation: fadeUp .5s ease .55s both;
-    }
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(10px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
+    .confirm-title { font-family:'Merriweather',serif; font-size:2.1rem; font-weight:900; color:#fff; margin-bottom:8px; position:relative; z-index:2; animation:fadeUp .5s ease .4s both; }
+    .customer-name { color:var(--harvest-lt); }
+    .confirm-subtitle { color:rgba(255,255,255,.75); font-size:.95rem; position:relative; z-index:2; animation:fadeUp .5s ease .55s both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-    .confirm-body { padding: 36px 40px; }
+    .confirm-body { padding:34px 38px; }
 
-    .order-ref {
-        display: flex; align-items: center; justify-content: space-between;
-        background: var(--ivory); border: 1px solid var(--border);
-        border-radius: 10px; padding: 14px 18px;
-        margin-bottom: 28px; font-size: .88rem;
-        animation: fadeUp .5s ease .65s both;
-    }
-    .order-ref-label { color: var(--mid-gray); }
-    .order-ref-val {
-        font-weight: 700; color: var(--crimson);
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1rem; letter-spacing: 1px;
-    }
+    .order-ref { display:flex; align-items:center; justify-content:space-between; background:var(--cream); border:1.5px solid var(--border); border-radius:10px; padding:13px 17px; margin-bottom:26px; font-size:.87rem; animation:fadeUp .5s ease .65s both; }
+    .order-ref-label { color:var(--mid-gray); }
+    .order-ref-val { font-weight:800; color:var(--forest-mid); font-size:1rem; }
 
-    .steps-title {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.3rem; font-weight: 600; color: var(--charcoal);
-        margin-bottom: 16px; animation: fadeUp .5s ease .75s both;
-    }
-    .steps-list {
-        display: flex; flex-direction: column; gap: 12px;
-        margin-bottom: 32px; animation: fadeUp .5s ease .85s both;
-    }
-    .step-item {
-        display: flex; align-items: flex-start; gap: 14px;
-        padding: 14px 16px; border: 1px solid var(--border);
-        border-radius: 10px; transition: all .25s;
-    }
-    .step-item:hover { border-color: var(--gold); background: var(--ivory); }
-    .step-dot {
-        width: 30px; height: 30px; border-radius: 50%;
-        background: var(--crimson-dark); color: #fff;
-        display: flex; align-items: center; justify-content: center;
-        font-size: .78rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
-    }
-    .step-text { flex: 1; }
-    .step-text strong { display: block; font-size: .9rem; color: var(--charcoal); margin-bottom: 2px; }
-    .step-text span { font-size: .8rem; color: var(--mid-gray); }
-    .step-icon { color: var(--gold); font-size: 1rem; margin-top: 4px; }
+    .steps-title { font-family:'Merriweather',serif; font-size:1.25rem; font-weight:700; color:var(--forest); margin-bottom:14px; animation:fadeUp .5s ease .75s both; }
+    .steps-list { display:flex; flex-direction:column; gap:11px; margin-bottom:28px; animation:fadeUp .5s ease .85s both; }
+    .step-item { display:flex; align-items:flex-start; gap:13px; padding:13px 15px; border:1.5px solid var(--border); border-radius:10px; transition:all .25s; }
+    .step-item:hover { border-color:var(--leaf); background:var(--cream); }
+    .step-dot { width:30px; height:30px; border-radius:50%; background:var(--forest-mid); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700; flex-shrink:0; margin-top:1px; }
+    .step-text { flex:1; }
+    .step-text strong { display:block; font-size:.88rem; color:var(--charcoal); margin-bottom:2px; }
+    .step-text span { font-size:.78rem; color:var(--mid-gray); }
+    .step-icon { color:var(--harvest); font-size:1rem; margin-top:4px; }
 
-    .confirm-actions {
-        display: flex; gap: 12px; flex-wrap: wrap;
-        animation: fadeUp .5s ease .95s both;
-    }
-    .btn-home {
-        flex: 1; min-width: 160px;
-        background: linear-gradient(135deg, var(--crimson), var(--crimson-dark));
-        color: #fff; text-decoration: none;
-        padding: 14px 24px; border-radius: 50px;
-        font-weight: 700; font-size: .95rem;
-        display: flex; align-items: center; justify-content: center; gap: 8px;
-        transition: all .3s;
-    }
-    .btn-home:hover { color: #fff; box-shadow: 0 8px 24px rgba(122,18,18,.3); transform: translateY(-2px); }
-    .btn-contact {
-        flex: 1; min-width: 160px;
-        background: transparent; color: var(--crimson); text-decoration: none;
-        padding: 14px 24px; border-radius: 50px;
-        border: 1.5px solid var(--crimson);
-        font-weight: 600; font-size: .95rem;
-        display: flex; align-items: center; justify-content: center; gap: 8px;
-        transition: all .3s;
-    }
-    .btn-contact:hover { background: var(--crimson); color: #fff; }
+    .confirm-actions { display:flex; gap:12px; flex-wrap:wrap; animation:fadeUp .5s ease .95s both; }
+    .btn-home { flex:1; min-width:150px; background:linear-gradient(135deg,var(--forest-mid),var(--forest)); color:#fff; text-decoration:none; padding:13px 22px; border-radius:50px; font-weight:700; font-size:.93rem; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .3s; }
+    .btn-home:hover { color:#fff; box-shadow:0 8px 22px rgba(27,67,50,.3); transform:translateY(-2px); }
+    .btn-contact { flex:1; min-width:150px; background:transparent; color:var(--forest-mid); text-decoration:none; padding:13px 22px; border-radius:50px; border:2px solid var(--forest-mid); font-weight:700; font-size:.93rem; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .3s; }
+    .btn-contact:hover { background:var(--forest-mid); color:#fff; }
 
-    .confirm-footer {
-        padding: 18px 40px; background: var(--ivory);
-        border-top: 1px solid var(--border);
-        display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap;
-        animation: fadeUp .5s ease 1.05s both;
-    }
-    .trust-item { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--mid-gray); }
-    .trust-item i { color: #27ae60; }
+    .confirm-footer { padding:16px 38px; background:var(--cream); border-top:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; gap:22px; flex-wrap:wrap; animation:fadeUp .5s ease 1.05s both; }
+    .trust-item { display:flex; align-items:center; gap:7px; font-size:.76rem; color:var(--mid-gray); }
+    .trust-item i { color:var(--leaf); }
 
-    @media (max-width: 576px) {
-        .confirm-banner { padding: 36px 24px 32px; }
-        .confirm-body { padding: 24px 20px; }
-        .confirm-footer { padding: 16px 20px; gap: 14px; }
-        .confirm-title { font-size: 1.8rem; }
-        .confirm-actions { flex-direction: column; }
-    }
+    @media (max-width:576px) { .confirm-banner{padding:36px 22px 32px;} .confirm-body{padding:22px 18px;} .confirm-title{font-size:1.7rem;} .confirm-actions{flex-direction:column;} }
 </style>
 {% endblock %}
 
@@ -169,23 +58,16 @@
 <div class="confirm-page">
     <div class="confirm-wrapper">
         <div class="confirm-card">
-
             <div class="confirm-banner">
-                <div class="success-ring">
-                    <i class="fas fa-check"></i>
-                </div>
-                <h1 class="confirm-title">
-                    Merci, <span class="customer-name">{{ nom }}</span> !
-                </h1>
-                <p class="confirm-subtitle">
-                    Votre commande a bien été enregistrée.
-                </p>
+                <div class="success-ring"><i class="fas fa-check"></i></div>
+                <h1 class="confirm-title">Merci, <span class="customer-name">{{ nom }}</span> !</h1>
+                <p class="confirm-subtitle">Votre commande a bien été enregistrée.</p>
             </div>
 
             <div class="confirm-body">
                 <div class="order-ref">
                     <span class="order-ref-label"><i class="fas fa-receipt me-2"></i>Commande enregistrée</span>
-                    <span class="order-ref-val">Confirmation envoyée</span>
+                    <span class="order-ref-val"><i class="fas fa-check-circle me-1"></i>Confirmée</span>
                 </div>
 
                 <div class="steps-title">Prochaines étapes</div>
@@ -217,12 +99,8 @@
                 </div>
 
                 <div class="confirm-actions">
-                    <a href="{% url 'home' %}" class="btn-home">
-                        <i class="fas fa-home"></i> Retour à la boutique
-                    </a>
-                    <a href="https://wa.me/221764139126" class="btn-contact" target="_blank">
-                        <i class="fab fa-whatsapp"></i> Nous contacter
-                    </a>
+                    <a href="{% url 'home' %}" class="btn-home"><i class="fas fa-home"></i> Retour à la boutique</a>
+                    <a href="https://wa.me/221764139126" class="btn-contact" target="_blank"><i class="fab fa-whatsapp"></i> Nous contacter</a>
                 </div>
             </div>
 
@@ -231,7 +109,6 @@
                 <div class="trust-item"><i class="fas fa-leaf"></i> Produits frais garantis</div>
                 <div class="trust-item"><i class="fas fa-headset"></i> Support disponible</div>
             </div>
-
         </div>
     </div>
 </div>

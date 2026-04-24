@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% block title %}Mes Commandes | AgriMarket{% endblock %}
+
+{% block extra_css %}
+<style>
+    .commandes-page { padding: 20px 0 60px; }
+    .page-title {
+        font-family: 'Merriweather', serif;
+        font-size: 2rem; font-weight: 900;
+        color: var(--forest); margin-bottom: 6px;
+    }
+    .page-subtitle { color: var(--mid-gray); margin-bottom: 36px; }
+
+    .commande-card {
+        background: #fff; border: 2px solid var(--border);
+        border-radius: var(--radius-lg); margin-bottom: 20px;
+        overflow: hidden; transition: box-shadow .25s;
+    }
+    .commande-card:hover { box-shadow: var(--shadow-md); }
+
+    .commande-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 24px;
+        background: var(--cream); border-bottom: 1.5px solid var(--border);
+        flex-wrap: wrap; gap: 12px;
+    }
+    .commande-id {
+        font-family: 'Merriweather', serif;
+        font-size: 1rem; font-weight: 700; color: var(--forest);
+    }
+    .commande-date { font-size: .85rem; color: var(--mid-gray); }
+
+    .statut {
+        padding: 5px 14px; border-radius: 50px;
+        font-size: .78rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+    .statut-confirmee { background: #dcfce7; color: #166534; }
+    .statut-annulee   { background: #fee2e2; color: #991b1b; }
+    .statut-livree    { background: #dbeafe; color: #1e40af; }
+
+    .commande-body { padding: 20px 24px; }
+
+    .article-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 0; border-bottom: 1px solid var(--border);
+        font-size: .9rem;
+    }
+    .article-row:last-child { border-bottom: none; }
+    .article-nom { font-weight: 600; color: var(--charcoal); }
+    .article-qty { color: var(--mid-gray); font-size: .82rem; margin-top: 2px; }
+    .article-prix { font-weight: 700; color: var(--forest-mid); }
+
+    .commande-footer {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 24px;
+        border-top: 2px solid var(--border); background: var(--cream);
+        flex-wrap: wrap; gap: 12px;
+    }
+    .total-final {
+        font-family: 'Merriweather', serif;
+        font-size: 1.4rem; font-weight: 900; color: var(--forest);
+    }
+    .btn-annuler {
+        background: none; border: 2px solid #dc2626;
+        color: #dc2626; border-radius: 50px;
+        padding: 8px 20px; font-size: .88rem; font-weight: 700;
+        cursor: pointer; transition: all .25s;
+    }
+    .btn-annuler:hover { background: #dc2626; color: #fff; }
+    .btn-annuler:disabled {
+        border-color: #ccc; color: #ccc; cursor: not-allowed;
+    }
+
+    .empty-commandes {
+        text-align: center; padding: 80px 20px;
+    }
+    .empty-commandes i {
+        font-size: 4rem; color: var(--border); display: block; margin-bottom: 20px;
+    }
+    .empty-commandes h3 {
+        font-family: 'Merriweather', serif;
+        font-size: 1.6rem; color: var(--forest); margin-bottom: 10px;
+    }
+    .empty-commandes p { color: var(--mid-gray); margin-bottom: 24px; }
+
+    .alert-login {
+        background: var(--cream); border: 2px solid var(--border);
+        border-radius: var(--radius); padding: 32px; text-align: center;
+    }
+    .alert-login i { font-size: 2.5rem; color: var(--harvest); margin-bottom: 16px; display: block; }
+    .alert-login h3 { font-family: 'Merriweather', serif; color: var(--forest); margin-bottom: 10px; }
+    .alert-login p { color: var(--mid-gray); margin-bottom: 20px; }
+    .btn-connect {
+        background: linear-gradient(135deg, var(--forest-mid), var(--forest));
+        color: #fff; text-decoration: none;
+        padding: 12px 28px; border-radius: 50px;
+        font-weight: 700; font-size: .95rem;
+        display: inline-flex; align-items: center; gap: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="commandes-page">
+    <h1 class="page-title">Mes Commandes</h1>
+    <p class="page-subtitle">Historique de vos commandes AgriMarket</p>
+
+    {% if not user.is_authenticated %}
+    <div class="alert-login">
+        <i class="fas fa-lock"></i>
+        <h3>Connexion requise</h3>
+        <p>Connectez-vous pour voir votre historique de commandes.</p>
+        <a href="{% url 'connexion' %}" class="btn-connect">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+        </a>
+    </div>
+
+    {% elif commandes %}
+    {% for cmd in commandes %}
+    <div class="commande-card" id="cmd-{{ cmd._id_str }}">
+
+        <div class="commande-header">
+            <div>
+                <div class="commande-id">
+                    <i class="fas fa-receipt me-2"></i>Commande #{{ cmd._id_str|slice:"-6:" }}
+                </div>
+                <div class="commande-date">
+                    <i class="fas fa-calendar me-1"></i>
+                    {{ cmd.date|date:"d/m/Y à H:i" }}
+                </div>
+            </div>
+            <span class="statut statut-{{ cmd.statut|slugify }}">
+                {% if cmd.statut == 'confirmée' %}<i class="fas fa-check me-1"></i>
+                {% elif cmd.statut == 'annulée' %}<i class="fas fa-times me-1"></i>
+                {% elif cmd.statut == 'livrée' %}<i class="fas fa-truck me-1"></i>
+                {% endif %}
+                {{ cmd.statut|capfirst }}
+            </span>
+        </div>
+
+        <div class="commande-body">
+            {% for article in cmd.articles %}
+            <div class="article-row">
+                <div>
+                    <div class="article-nom">{{ article.nom }}</div>
+                    <div class="article-qty">{{ article.quantite }} × {{ article.prix_unitaire }} FCFA</div>
+                </div>
+                <div class="article-prix">
+                    {{ article.quantite|floatformat:0 }} × {{ article.prix_unitaire }} = 
+                    {% widthratio article.quantite 1 article.prix_unitaire %} FCFA
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="commande-footer">
+            <div>
+                <span style="color:var(--mid-gray);font-size:.88rem">Total payé</span><br>
+                <span class="total-final">{{ cmd.total|floatformat:0 }} FCFA</span>
+            </div>
+            {% if cmd.statut == 'confirmée' %}
+            <button class="btn-annuler"
+                    onclick="annulerCommande('{{ cmd._id_str }}')"
+                    id="btn-{{ cmd._id_str }}">
+                <i class="fas fa-ban me-1"></i> Annuler la commande
+            </button>
+            {% else %}
+            <button class="btn-annuler" disabled>
+                <i class="fas fa-ban me-1"></i> Non annulable
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty-commandes">
+        <i class="fas fa-box-open"></i>
+        <h3>Aucune commande</h3>
+        <p>Vous n'avez pas encore passé de commande avec ce compte.</p>
+        <a href="{% url 'home' %}" class="btn-connect">
+            <i class="fas fa-basket-shopping"></i> Commencer mes achats
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+function annulerCommande(commandeId) {
+    if (!confirm('Voulez-vous vraiment annuler cette commande ?')) return;
+
+    var btn = document.getElementById('btn-' + commandeId);
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Annulation...';
+
+    fetch('/annuler-commande/' + commandeId + '/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            // Mettre à jour le badge statut
+            var card = document.getElementById('cmd-' + commandeId);
+            var statut = card.querySelector('.statut');
+            statut.className = 'statut statut-annulee';
+            statut.innerHTML = '<i class="fas fa-times me-1"></i> Annulée';
+
+            btn.outerHTML = '<button class="btn-annuler" disabled><i class="fas fa-ban me-1"></i> Non annulable</button>';
+            showToast('Commande annulée avec succès', 'success');
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-ban me-1"></i> Annuler la commande';
+            alert('Erreur : ' + data.error);
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-ban me-1"></i> Annuler la commande';
+        alert('Erreur réseau, réessayez.');
+    });
+}
+</script>
+{% endblock %}

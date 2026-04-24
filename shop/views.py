@@ -8,6 +8,17 @@ from django.http import Http404
 from db.mongo import get_produits, get_commandes
 from db.queries import decrementer_stock
 from .models import Commande, Produit  # ← import des modèles Django
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from bson import ObjectId
+from django.http import JsonResponse
+
+from django.views.decorators.http import require_POST
+
+
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -55,19 +66,19 @@ class ImageMock:
 
 class ProduitMongo:
     """
-    Fusionne un document MongoDB avec le modèle Django via l'id.
-    L'id Django == le champ 'id' dans MongoDB (clé de jointure fiable).
+    Jointure Django ↔ MongoDB par nom (plus robuste que par id).
+    Priorité image : Django admin > MongoDB path > placeholder.
     """
     _django_cache = {}
 
     @classmethod
-    def _get_django_produit(cls, produit_id):
-        if produit_id not in cls._django_cache:
+    def _get_django_by_nom(cls, nom):
+        if nom not in cls._django_cache:
             try:
-                cls._django_cache[produit_id] = Produit.objects.get(id=produit_id)
+                cls._django_cache[nom] = Produit.objects.get(nom=nom)
             except Produit.DoesNotExist:
-                cls._django_cache[produit_id] = None
-        return cls._django_cache[produit_id]
+                cls._django_cache[nom] = None
+        return cls._django_cache[nom]
 
     def __init__(self, doc):
         self.id          = doc.get('id', 0)
@@ -80,12 +91,14 @@ class ProduitMongo:
         self.attributs   = doc.get('attributs', {})
         self.categorie   = CategorieMongo(doc.get('categorie', ''))
 
-        # ── Jointure par ID (fiable) ──────────────────────────────────────
-        django_produit = self._get_django_produit(self.id)  # ← par id, pas par nom
+        # ── Image : Django admin OU chemin MongoDB ──────────────
+        mongo_path     = doc.get('image', '')
+        django_produit = self._get_django_by_nom(self.nom)
         django_image   = django_produit.image if django_produit else None
-        self.image     = ImageMock(
+
+        self.image = ImageMock(
             django_image_field=django_image,
-            mongo_path=doc.get('image', '')
+            mongo_path=mongo_path
         )
 
     def __str__(self):
@@ -225,3 +238,103 @@ def verifier(request):
 def Confirmation(request):
     nom = request.session.get('client_nom', 'Client')
     return render(request, 'shop/confirmation.html', {'nom': nom})
+def inscription(request):
+    if request.method == "POST":
+        username  = request.POST.get('username')
+        email     = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if password1 != password2:
+            messages.error(request, "Les mots de passe ne correspondent pas.")
+            return render(request, 'shop/inscription.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Ce nom d'utilisateur est déjà pris.")
+            return render(request, 'shop/inscription.html')
+
+        user = User.objects.create_user(username=username, email=email, password=password1)
+        user.save()
+        login(request, user)
+        messages.success(request, f"Bienvenue {username} !")
+        return redirect('home')
+
+    return render(request, 'shop/inscription.html')
+
+
+def connexion(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Bienvenue {user.username} !")
+            return redirect('home')
+        else:
+            messages.error(request, "Identifiants incorrects.")
+
+    return render(request, 'shop/connexion.html')
+
+
+def deconnexion(request):
+    logout(request)
+    messages.success(request, "Vous avez été déconnecté.")
+    return redirect('home')
+def annuler_commande(request, commande_id):
+    """
+    Annule une commande : met le statut à 'annulée' dans MongoDB
+    et restaure le stock des produits.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+
+    try:
+        # Chercher la commande dans MongoDB
+        commande = get_commandes().find_one({'_id': ObjectId(commande_id)})
+
+        if not commande:
+            return JsonResponse({'error': 'Commande introuvable'}, status=404)
+
+        if commande.get('statut') == 'annulée':
+            return JsonResponse({'error': 'Commande déjà annulée'}, status=400)
+
+        # Restaurer le stock pour chaque article
+        for article in commande.get('articles', []):
+            get_produits().update_one(
+                {'id': article['produit_id']},
+                {'$inc': {'stock': article['quantite']}}  # remettre le stock
+            )
+
+        # Mettre le statut à annulée
+        get_commandes().update_one(
+            {'_id': ObjectId(commande_id)},
+            {'$set': {'statut': 'annulée'}}
+        )
+
+        return JsonResponse({'success': True, 'message': 'Commande annulée avec succès'})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def mes_commandes(request):
+    """
+    Affiche l'historique des commandes du client connecté.
+    """
+    commandes = []
+
+    if request.user.is_authenticated:
+        email = request.user.email
+        if email:
+            docs = list(get_commandes().find(
+                {'client.email': email},
+                sort=[('date', -1)]
+            ))
+            for d in docs:
+                d['_id_str'] = str(d['_id'])
+                commandes.append(d)
+
+    return render(request, 'shop/mes_commandes.html', {'commandes': commandes})
+    

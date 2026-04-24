@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Définition propre du chemin vers les templates
 TEMPLATES_DIRS = os.path.join(BASE_DIR, 'templates')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Chemin physique sur ton ordinateur
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -25,7 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'shop',
+    'shop.apps.ShopConfig',
+    
 ]
 
 MIDDLEWARE = [

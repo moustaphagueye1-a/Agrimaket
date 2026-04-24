@@ -9,7 +9,7 @@ PRODUITS = [
         "stock": 80,
         "producteur": "Coopérative Agricole de Ziguinchor",
         "description": "Mangues Kent fraîches cultivées en Casamance, sucrées et juteuses.",
-        "image": "",
+        "image": "c:\Users\Admin\OneDrive\Images\imagemangue.jpeg",
         "attributs": {"bio": True, "variete": "Kent", "poids_kg": 1}
     },
     {
