@@ -7,6 +7,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key')
 DEBUG      =True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    "https://agrimaket.onrender.com"
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
