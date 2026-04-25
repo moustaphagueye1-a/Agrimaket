@@ -24,8 +24,7 @@ RUN python manage.py collectstatic --noinput
 
 # Exposer le port
 EXPOSE 10000
-
-# Commande de démarrage
+# Commande de lancement
 CMD python manage.py migrate && \
 python manage.py seed_mongo || true && \
-gunicorn ecommerce.wsgi:application --bind 0.0.0.0:10000 --workers 2s
+gunicorn ecommerce.wsgi:application --bind 0.0.0.0:10000 --workers 2
