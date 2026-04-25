@@ -34,22 +34,29 @@ class CategorieMongo:
 
 class ImageMock:
     """
-    Priorité 1 : image venant du modèle Django (uploadée via l'admin).
-    Priorité 2 : chemin stocké dans MongoDB.
-    Priorité 3 : vide → le template affichera le placeholder SVG.
+    Gère 3 cas :
+    - URL externe complète (Cloudinary) → utilisée directement
+    - Image Django admin → .url Django
+    - Chemin relatif MongoDB → /media/...
     """
     def __init__(self, django_image_field=None, mongo_path=''):
-        # Si le champ Django existe et a une image uploadée
-        if django_image_field and bool(django_image_field):
+        self._url  = ''
+        self._bool = False
+
+        # Cas 1 : chemin MongoDB est une URL externe (commence par http)
+        if mongo_path and mongo_path.startswith('http'):
+            self._url  = mongo_path
+            self._bool = True
+
+        # Cas 2 : image uploadée via admin Django
+        elif django_image_field and bool(django_image_field):
             self._url  = django_image_field.url
             self._bool = True
-        # Sinon, chemin MongoDB
+
+        # Cas 3 : chemin relatif local
         elif mongo_path:
             self._url  = f'/media/{mongo_path}'
             self._bool = True
-        else:
-            self._url  = ''
-            self._bool = False
 
     def __bool__(self):
         return self._bool
