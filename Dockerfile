@@ -27,6 +27,5 @@ EXPOSE 10000
 
 # Commande de démarrage
 CMD python manage.py migrate && \
-python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); username='admin'; email='admin@mail.com'; password='admin123'; User.objects.filter(username=username).exists() or User.objects.create_superuser(username,email,password)" || true && \
 python manage.py seed_mongo || true && \
-gunicorn ecommerce.wsgi:application --bind 0.0.0.0:10000 --workers 2
+gunicorn ecommerce.wsgi:application --bind 0.0.0.0:10000 --workers 2s
